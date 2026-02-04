@@ -6,8 +6,50 @@
 </head>
 <body>
     <h1>Smart Fitness Activity Recommendation System</h1>
-    <p>This project recommends fitness activities based on medical data.</p>
 
-    <p><em>Form and recommendations will be added in the next phase.</em></p>
+    <form method="POST">
+        <label>Age:</label><br>
+        <input type="number" name="age" required><br><br>
+
+        <label>Height (in meters):</label><br>
+        <input type="text" name="height" required><br><br>
+
+        <label>Weight (in kg):</label><br>
+        <input type="text" name="weight" required><br><br>
+
+        <label>Activity Level:</label><br>
+        <select name="activity_level">
+            <option value="beginner">Beginner</option>
+            <option value="active">Active</option>
+        </select><br><br>
+
+        <label>Any Medical Condition?</label><br>
+        <select name="medical_condition">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select><br><br>
+
+        <button type="submit">Get Recommendation</button>
+    </form>
+
+    {% if bmi %}
+        <h2>Your BMI: {{ bmi|round(2) }}</h2>
+
+        <h3>Recommended Activities:</h3>
+        <ul>
+            {% for r in recommendations %}
+                <li>{{ r }}</li>
+            {% endfor %}
+        </ul>
+
+        {% if notes %}
+            <h3>Notes:</h3>
+            <ul>
+                {% for n in notes %}
+                    <li>{{ n }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endif %}
 </body>
 </html>
