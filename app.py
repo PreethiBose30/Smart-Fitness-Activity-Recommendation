@@ -1,32 +1,42 @@
 # Main Flask application
 from flask import Flask, render_template, request
-from src.recommendation import calculate_bmi, recommend_fitness
 
 app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
-def home():
-    recommendations = None
-    notes = None
+def index():
     bmi = None
+    activities = []
+    notes = []
 
     if request.method == "POST":
         age = int(request.form["age"])
         height = float(request.form["height"])
         weight = float(request.form["weight"])
-        activity_level = request.form["activity_level"]
-        medical_condition = request.form["medical_condition"]
+        activity = request.form["activity"]
+        medical = request.form["medical"]
 
-        bmi = calculate_bmi(height, weight)
-        recommendations, notes = recommend_fitness(
-            age, bmi, medical_condition, activity_level
-        )
+        bmi = round(weight / (height * height), 2)
+
+        # Recommendation logic
+        if bmi < 18.5:
+            activities = ["Walking", "Yoga", "Light strength training"]
+            notes.append("Focus on healthy weight gain")
+        elif 18.5 <= bmi < 25:
+            activities = ["Jogging", "Cycling", "Strength training"]
+            notes.append("Maintain current fitness level")
+        else:
+            activities = ["Walking", "Swimming", "Yoga"]
+            notes.append("Avoid high-intensity workouts")
+
+        if medical == "yes":
+            notes.append("Consult a doctor before starting new exercises")
 
     return render_template(
         "index.html",
-        recommendations=recommendations,
-        notes=notes,
-        bmi=bmi
+        bmi=bmi,
+        activities=activities,
+        notes=notes
     )
 
 if __name__ == "__main__":
