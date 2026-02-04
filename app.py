@@ -13,12 +13,12 @@ def index():
         age = int(request.form["age"])
         height = float(request.form["height"])
         weight = float(request.form["weight"])
-        activity_level = request.form["activity"]
+        activity = request.form["activity"]
         medical = request.form["medical"]
 
         bmi = round(weight / (height * height), 2)
 
-        # Simple recommendation logic
+        # Recommendation logic
         if bmi < 18.5:
             activities = ["Walking", "Yoga", "Light strength training"]
             notes.append("Focus on healthy weight gain")
