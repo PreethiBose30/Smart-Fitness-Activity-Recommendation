@@ -12,8 +12,14 @@
 
     <form id="form">
         <input id="age" placeholder="Age" required>
-        <input id="height" placeholder="Height (cm or m)" required>
-        <input id="weight" placeholder="Weight (kg)" required>
+        <input id="height" placeholder="Height" required>
+        <input id="weight" placeholder="Weight" required>
+
+        <select id="goal">
+            <option value="maintain">Maintain</option>
+            <option value="loss">Weight Loss</option>
+            <option value="gain">Weight Gain</option>
+        </select>
 
         <select id="medical">
             <option value="no">No Medical Condition</option>
@@ -27,9 +33,14 @@
 <!-- RESULT POPUP -->
 <div id="resultModal" class="modal">
     <div class="modal-content">
-        <h2>Result</h2>
+        <h2>Your Results</h2>
+
         <p id="bmi"></p>
         <p id="category"></p>
+        <p id="calories"></p>
+        <p id="water"></p>
+        <p id="workout"></p>
+
         <ul id="activities"></ul>
 
         <button onclick="showDiet()">Show Diet Plan</button>
@@ -41,6 +52,7 @@
 <div id="dietModal" class="modal">
     <div class="modal-content">
         <h2>Diet Plan</h2>
+
         <p id="dietBmi"></p>
         <p id="dietCategory"></p>
 
@@ -64,8 +76,10 @@ document.getElementById("form").addEventListener("submit", function(e) {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
+            age: document.getElementById("age").value,
             height: document.getElementById("height").value,
             weight: document.getElementById("weight").value,
+            goal: document.getElementById("goal").value,
             medical: document.getElementById("medical").value
         })
     })
@@ -74,13 +88,16 @@ document.getElementById("form").addEventListener("submit", function(e) {
 
         document.getElementById("bmi").innerText = "BMI: " + data.bmi;
         document.getElementById("category").innerText = "Category: " + data.category;
+        document.getElementById("calories").innerText = "Daily Calories: " + data.calories;
+        document.getElementById("water").innerText = "Water Intake: " + data.water + " L/day";
+        document.getElementById("workout").innerText = "Workout Time: " + data.workout;
 
-        let actList = document.getElementById("activities");
-        actList.innerHTML = "";
+        let list = document.getElementById("activities");
+        list.innerHTML = "";
         data.activities.forEach(a => {
             let li = document.createElement("li");
             li.innerText = a;
-            actList.appendChild(li);
+            list.appendChild(li);
         });
 
         window.dietData = data;
@@ -113,9 +130,7 @@ function showDiet() {
         type: "pie",
         data: {
             labels: data.labels,
-            datasets: [{
-                data: data.chart_data
-            }]
+            datasets: [{ data: data.chart_data }]
         },
         options: {
             responsive: true,
