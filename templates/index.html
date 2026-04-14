@@ -13,50 +13,50 @@
     <button onclick="toggleDark()">🌙</button>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- CENTER CONTENT -->
 <div class="main">
-    <div class="container">
-        <h2>Enter Your Details</h2>
+<div class="container">
+    <h2>Enter Your Details</h2>
 
-        <form id="form">
+    <form id="form">
 
-            <div class="form-group">
-                <label>Age</label>
-                <input id="age" required>
-            </div>
+        <div class="form-group">
+            <label>Age</label>
+            <input id="age" required>
+        </div>
 
-            <div class="form-group">
-                <label>Height (cm)</label>
-                <input id="height" required>
-            </div>
+        <div class="form-group">
+            <label>Height (cm)</label>
+            <input id="height" required>
+        </div>
 
-            <div class="form-group">
-                <label>Weight (kg)</label>
-                <input id="weight" required>
-            </div>
+        <div class="form-group">
+            <label>Weight (kg)</label>
+            <input id="weight" required>
+        </div>
 
-            <div class="form-group">
-                <label>Goal</label>
-                <select id="goal">
-                    <option value="maintain">Maintain</option>
-                    <option value="loss">Weight Loss</option>
-                    <option value="gain">Weight Gain</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label>Goal</label>
+            <select id="goal">
+                <option value="maintain">Maintain</option>
+                <option value="loss">Weight Loss</option>
+                <option value="gain">Weight Gain</option>
+            </select>
+        </div>
 
-            <div class="form-group">
-                <label>Medical Condition</label>
-                <select id="medical">
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label>Medical Condition</label>
+            <select id="medical">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+        </div>
 
-            <button type="submit">Get Result</button>
-        </form>
+        <button type="submit">Get Result</button>
+    </form>
 
-        <p id="progress" style="margin-top:10px; font-size:14px;"></p>
-    </div>
+    <p id="progress"></p>
+</div>
 </div>
 
 <!-- RESULT MODAL -->
@@ -107,21 +107,27 @@ function toggleDark() {
 document.getElementById("form").addEventListener("submit", function(e) {
     e.preventDefault();
 
+    let age = document.getElementById("age").value;
+    let height = document.getElementById("height").value;
+    let weight = document.getElementById("weight").value;
+    let goal = document.getElementById("goal").value;
+    let medical = document.getElementById("medical").value;
+
     fetch("/calculate", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-            age: document.getElementById("age").value,
-            height: document.getElementById("height").value,
-            weight: document.getElementById("weight").value,
-            goal: document.getElementById("goal").value,
-            medical: document.getElementById("medical").value
+            age: age,
+            height: height,
+            weight: weight,
+            goal: goal,
+            medical: medical
         })
     })
     .then(res => res.json())
     .then(data => {
 
-        // Progress tracking
+        // Progress
         let lastBMI = localStorage.getItem("bmi");
         if (lastBMI) {
             document.getElementById("progress").innerText =
@@ -131,9 +137,9 @@ document.getElementById("form").addEventListener("submit", function(e) {
 
         document.getElementById("bmi").innerText = "BMI: " + data.bmi;
         document.getElementById("category").innerText = "Category: " + data.category;
-        document.getElementById("calories").innerText = "Daily Calories: " + data.calories;
-        document.getElementById("water").innerText = "Water Intake: " + data.water + " L/day";
-        document.getElementById("workout").innerText = "Workout Time: " + data.workout;
+        document.getElementById("calories").innerText = "Calories: " + data.calories;
+        document.getElementById("water").innerText = "Water: " + data.water + " L";
+        document.getElementById("workout").innerText = "Workout: " + data.workout;
 
         let list = document.getElementById("activities");
         list.innerHTML = "";
@@ -144,7 +150,12 @@ document.getElementById("form").addEventListener("submit", function(e) {
         });
 
         window.dietData = data;
+
         document.getElementById("resultModal").style.display = "flex";
+    })
+    .catch(err => {
+        console.log("ERROR:", err);
+        alert("Something went wrong. Check console.");
     });
 });
 
