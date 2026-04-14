@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Diet Chart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -12,22 +14,41 @@
 </div>
 
 <div class="container">
-    <h2>Diet Chart</h2>
+    <h2>Balanced Diet Chart</h2>
 
-    <h3>Vegetarian</h3>
-    <ul>
-        <li>Fruits</li>
-        <li>Vegetables</li>
-        <li>Milk & Nuts</li>
-    </ul>
+    <canvas id="chart"></canvas>
 
-    <h3>Non-Vegetarian</h3>
-    <ul>
-        <li>Eggs</li>
-        <li>Chicken</li>
-        <li>Fish</li>
-    </ul>
+    <table>
+        <tr>
+            <th>Category</th>
+            <th>Foods</th>
+        </tr>
+        <tr>
+            <td>Proteins</td>
+            <td>Eggs, Chicken, Paneer, Lentils</td>
+        </tr>
+        <tr>
+            <td>Carbs</td>
+            <td>Rice, Bread, Fruits</td>
+        </tr>
+        <tr>
+            <td>Fats</td>
+            <td>Nuts, Oils, Butter</td>
+        </tr>
+    </table>
 </div>
+
+<script>
+new Chart(document.getElementById("chart"), {
+    type: "pie",
+    data: {
+        labels: ["Proteins", "Carbs", "Fats"],
+        datasets: [{
+            data: [30, 50, 20]
+        }]
+    }
+});
+</script>
 
 </body>
 </html>
