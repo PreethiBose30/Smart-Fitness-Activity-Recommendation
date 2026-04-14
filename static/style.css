@@ -6,62 +6,83 @@
 
 body {
     font-family: 'Segoe UI', sans-serif;
-    height: 100vh;
-    background: linear-gradient(135deg, #dbeafe, #e0f7f4);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background: linear-gradient(135deg, #e0f7fa, #e8f5e9);
+    min-height: 100vh;
 }
 
 /* HEADER */
 .header {
     width: 100%;
-    padding: 15px;
     background: #2c3e50;
     color: white;
-    text-align: center;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
 }
 
-/* DARK MODE */
-.dark {
-    background: #1e293b;
-    color: white;
+/* MAIN CENTERING */
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 70px);
 }
 
-/* FORM BOX */
+/* FORM CARD */
 .container {
-    margin-top: 40px;
-    width: 380px;
+    width: 420px;
     background: white;
     padding: 30px;
     border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* TITLE */
+.container h2 {
     text-align: center;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    margin-bottom: 20px;
+    color: #2c3e50;
 }
 
-.dark .container {
-    background: #334155;
+/* FORM GROUP */
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
-/* INPUTS */
-input, select {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
+.form-group label {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px;
     border-radius: 8px;
     border: 1px solid #ccc;
+    font-size: 14px;
 }
 
 /* BUTTON */
 button {
     width: 100%;
     padding: 12px;
-    margin-top: 10px;
+    margin-top: 15px;
     background: #27ae60;
     color: white;
     border: none;
     border-radius: 8px;
+    font-size: 15px;
     cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #219150;
 }
 
 /* MODAL */
@@ -75,27 +96,39 @@ button {
     align-items: center;
 }
 
-/* ANIMATION */
+/* MODAL BOX */
 .modal-content {
     width: 420px;
     background: white;
     padding: 25px;
     border-radius: 15px;
-    text-align: center;
     animation: popup 0.3s ease;
 }
 
-@keyframes popup {
-    from { transform: scale(0.7); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+/* MODAL TEXT ALIGNMENT */
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 15px;
 }
 
+.modal-content p {
+    margin: 5px 0;
+    text-align: center;
+}
+
+.modal-content ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+/* CHART */
 .chart-box {
-    width: 260px;
-    height: 260px;
-    margin: 20px auto;
+    width: 250px;
+    height: 250px;
+    margin: 15px auto;
 }
 
+/* TABLE */
 table {
     width: 100%;
     margin-top: 15px;
@@ -103,13 +136,13 @@ table {
 }
 
 th, td {
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     padding: 8px;
+    text-align: center;
 }
 
-/* FOOTER */
-.footer {
-    margin-top: auto;
-    padding: 10px;
-    font-size: 12px;
+/* ANIMATION */
+@keyframes popup {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
