@@ -45,9 +45,20 @@ def index():
         activity = request.form["activity_level"]
         medical = request.form["medical_condition"]
 
-        bmi = round(float(weight) / (float(height) ** 2), 2)
+        try:
+            height = float(height)
+            weight = float(weight)
 
-        recommendations, notes, category = get_recommendations(bmi, medical)
+            # convert cm to meters automatically
+            if height > 3:
+                height = height / 100
+
+            bmi = round(weight / (height ** 2), 2)
+
+            recommendations, notes, category = get_recommendations(bmi, medical)
+
+        except:
+            bmi = None
 
     return render_template(
         "index.html",
