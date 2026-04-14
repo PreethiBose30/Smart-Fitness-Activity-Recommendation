@@ -1,95 +1,96 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+from flask import Flask, render_template, request, jsonify
 
-body {
-    font-family: 'Segoe UI', sans-serif;
-    height: 100vh;
-    background: linear-gradient(135deg, #dbeafe, #e0f7f4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+app = Flask(__name__)
 
-.container {
-    width: 380px;
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    text-align: center;
-}
+def get_recommendations(bmi, medical):
+    if bmi < 18.5:
+        activities = ["Walking", "Yoga", "Light strength training"]
+        category = "Underweight"
+    elif 18.5 <= bmi < 25:
+        activities = ["Jogging", "Cycling", "Strength training"]
+        category = "Normal"
+    else:
+        activities = ["Cardio", "Swimming", "Brisk walking"]
+        category = "Overweight"
 
-h2 {
-    margin-bottom: 20px;
-    color: #2c3e50;
-}
+    notes = []
+    if medical == "yes":
+        notes.append("Avoid high intensity workouts")
 
-input, select {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
+    return activities, notes, category
 
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    background: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
 
-.modal {
-    display: none;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    top: 0;
-    left: 0;
-    justify-content: center;
-    align-items: center;
-}
+def get_diet_plan(category):
+    if category == "Underweight":
+        return ["Proteins", "Carbs", "Fats"], [40, 40, 20], {
+            "Proteins": "Milk, Eggs, Paneer",
+            "Carbs": "Rice, Bread, Fruits",
+            "Fats": "Nuts, Butter"
+        }
+    elif category == "Normal":
+        return ["Proteins", "Carbs", "Fats"], [30, 50, 20], {
+            "Proteins": "Chicken, Dal",
+            "Carbs": "Rice, Chapati",
+            "Fats": "Oil, Nuts"
+        }
+    else:
+        return ["Proteins", "Carbs", "Fats"], [35, 40, 25], {
+            "Proteins": "Lean meat, Lentils",
+            "Carbs": "Oats, Vegetables",
+            "Fats": "Olive oil"
+        }
 
-.modal-content {
-    width: 420px;
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    text-align: center;
-}
 
-ul {
-    text-align: left;
-    margin-top: 10px;
-}
+def calculate_calories(weight, height, age, goal):
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5
 
-/* FIXED CHART SIZE */
-.chart-box {
-    width: 260px;
-    height: 260px;
-    margin: 20px auto;
-}
+    if goal == "loss":
+        return int(bmr - 300)
+    elif goal == "gain":
+        return int(bmr + 300)
+    return int(bmr)
 
-.chart-box canvas {
-    width: 100% !important;
-    height: 100% !important;
-}
 
-table {
-    width: 100%;
-    margin-top: 15px;
-    border-collapse: collapse;
-}
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-th, td {
-    border: 1px solid #ccc;
-    padding: 8px;
-}
+
+@app.route("/calculate", methods=["POST"])
+def calculate():
+    data = request.get_json()
+
+    age = int(data["age"])
+    height = float(data["height"])
+    weight = float(data["weight"])
+    medical = data["medical"]
+    goal = data["goal"]
+
+    if height > 3:
+        height /= 100
+
+    bmi = round(weight / (height ** 2), 2)
+
+    activities, notes, category = get_recommendations(bmi, medical)
+    labels, chart_data, foods = get_diet_plan(category)
+
+    calories = calculate_calories(weight, height * 100, age, goal)
+    water = round(weight * 0.033, 2)
+    workout = "30–45 mins" if category == "Normal" else "45–60 mins"
+
+    return jsonify({
+        "bmi": bmi,
+        "category": category,
+        "activities": activities,
+        "notes": notes,
+        "labels": labels,
+        "chart_data": chart_data,
+        "foods": foods,
+        "calories": calories,
+        "water": water,
+        "workout": workout
+    })
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
