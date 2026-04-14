@@ -16,34 +16,49 @@
     <h2>Fitness Recommendation</h2>
 
     <form method="POST">
-        Age: <input name="age" value="{{ age }}"><br><br>
-        Height: <input name="height" value="{{ height }}"><br><br>
-        Weight: <input name="weight" value="{{ weight }}"><br><br>
+        <label>Age</label>
+        <input name="age" value="{{ age }}">
 
-        Activity:
+        <label>Height (m)</label>
+        <input name="height" value="{{ height }}">
+
+        <label>Weight (kg)</label>
+        <input name="weight" value="{{ weight }}">
+
+        <label>Activity</label>
         <select name="activity_level">
-            <option value="beginner">Beginner</option>
-            <option value="active">Active</option>
-        </select><br><br>
+            <option value="beginner" {% if activity=="beginner" %}selected{% endif %}>Beginner</option>
+            <option value="active" {% if activity=="active" %}selected{% endif %}>Active</option>
+        </select>
 
-        Medical:
+        <label>Medical Condition</label>
         <select name="medical_condition">
-            <option value="no">No</option>
-            <option value="yes">Yes</option>
-        </select><br><br>
+            <option value="no" {% if medical=="no" %}selected{% endif %}>No</option>
+            <option value="yes" {% if medical=="yes" %}selected{% endif %}>Yes</option>
+        </select>
 
-        <button type="submit">Submit</button>
+        <button type="submit">Get Recommendation</button>
     </form>
 
-    {% if bmi %}
-    <h3>BMI: {{ bmi }}</h3>
-    <h4>Category: {{ category }}</h4>
+    {% if bmi is not none %}
+    <div class="result">
+        <h3>BMI: {{ bmi }}</h3>
+        <h4>Category: {{ category }}</h4>
 
-    <ul>
-        {% for r in recommendations %}
-        <li>{{ r }}</li>
-        {% endfor %}
-    </ul>
+        <h4>Recommended Activities:</h4>
+        <ul>
+            {% for r in recommendations %}
+            <li>{{ r }}</li>
+            {% endfor %}
+        </ul>
+
+        <h4>Notes:</h4>
+        <ul>
+            {% for n in notes %}
+            <li>{{ n }}</li>
+            {% endfor %}
+        </ul>
+    </div>
     {% endif %}
 </div>
 
