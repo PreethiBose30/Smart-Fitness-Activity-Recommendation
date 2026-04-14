@@ -3,9 +3,6 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 def get_recommendations(bmi, medical):
-    activities = []
-    notes = []
-
     if bmi < 18.5:
         activities = ["Walking", "Yoga", "Light strength training"]
         category = "Underweight"
@@ -16,6 +13,7 @@ def get_recommendations(bmi, medical):
         activities = ["Cardio", "Swimming", "Brisk walking"]
         category = "Overweight"
 
+    notes = []
     if medical == "yes":
         notes.append("Avoid high intensity workouts")
 
@@ -62,7 +60,6 @@ def calculate():
     bmi = round(weight / (height ** 2), 2)
 
     activities, notes, category = get_recommendations(bmi, medical)
-
     labels, chart_data, foods = get_diet_plan(category)
 
     return jsonify({
