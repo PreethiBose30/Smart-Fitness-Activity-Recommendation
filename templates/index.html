@@ -1,65 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Fitness App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<<<<<<< HEAD
-
-<h1>Smart Fitness Activity Recommendation System</h1>
-
-<form method="POST">
-
-    <label>Age:</label><br>
-    <input type="number" name="age" required><br><br>
-
-    <label>Height (in meters):</label><br>
-    <input type="text" name="height" required><br><br>
-
-    <label>Weight (in kg):</label><br>
-    <input type="text" name="weight" required><br><br>
-
-    <label>Activity Level:</label><br>
-    <select name="activity_level">
-        <option value="Beginner">Beginner</option>
-        <option value="Intermediate">Intermediate</option>
-        <option value="Advanced">Advanced</option>
-    </select><br><br>
-
-    <label>Fitness Goal:</label><br>
-    <select name="goal">
-        <option value="Weight Loss">Weight Loss</option>
-        <option value="Muscle Gain">Muscle Gain</option>
-        <option value="General Fitness">General Fitness</option>
-    </select><br><br>
-
-    <label>Diet Preference:</label><br>
-    <select name="diet">
-        <option value="Vegetarian">Vegetarian</option>
-        <option value="Non-Vegetarian">Non-Vegetarian</option>
-    </select><br><br>
-
-    <label>Any Medical Condition?</label><br>
-    <select name="medical">
-        <option value="No">No</option>
-        <option value="Yes">Yes</option>
-    </select><br><br>
-
-    <button type="submit">Get Recommendation</button>
-
-</form>
-
-<hr>
-
-<h2>Your BMI:</h2>
-<p>{{ bmi }}</p>
-
-<h2>Recommended Activities:</h2>
-<p>{{ recommendation }}</p>
-
-<h2>Diet Plan:</h2>
-<p>{{ diet_plan }}</p>
-=======
 
 <div class="navbar">
     <a href="/">Home</a>
@@ -101,7 +46,6 @@
     </ul>
     {% endif %}
 </div>
->>>>>>> 1e3b0c3f62db37affb0544fb8c85f6f2f7923b3f
 
 </body>
 </html>
