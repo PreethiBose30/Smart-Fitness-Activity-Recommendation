@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Diet Chart</title>
+    <title>Diet Plan</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<div class="navbar">
-    <a href="/">Home</a>
-    <a href="/diet">Diet</a>
-    <a href="/about">About</a>
-</div>
-
 <div class="container">
-    <h2>Balanced Diet Chart</h2>
+    <h2>Diet Plan</h2>
+
+    <h3>BMI: {{ bmi }}</h3>
+    <h4>Category: {{ category }}</h4>
 
     <canvas id="chart"></canvas>
 
@@ -23,18 +20,13 @@
             <th>Category</th>
             <th>Foods</th>
         </tr>
+
+        {% for key, value in foods.items() %}
         <tr>
-            <td>Proteins</td>
-            <td>Eggs, Chicken, Paneer, Lentils</td>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
         </tr>
-        <tr>
-            <td>Carbs</td>
-            <td>Rice, Bread, Fruits</td>
-        </tr>
-        <tr>
-            <td>Fats</td>
-            <td>Nuts, Oils, Butter</td>
-        </tr>
+        {% endfor %}
     </table>
 </div>
 
@@ -42,9 +34,9 @@
 new Chart(document.getElementById("chart"), {
     type: "pie",
     data: {
-        labels: ["Proteins", "Carbs", "Fats"],
+        labels: {{ labels|tojson }},
         datasets: [{
-            data: [30, 50, 20]
+            data: {{ data|tojson }}
         }]
     }
 });
