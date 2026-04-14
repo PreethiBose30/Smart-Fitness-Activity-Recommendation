@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fitness Form</title>
+    <title>Fitness App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="container">
     <h2>Enter Your Details</h2>
 
-    <form method="POST">
-        <input name="age" placeholder="Age" required>
-        <input name="height" placeholder="Height (cm or m)" required>
-        <input name="weight" placeholder="Weight (kg)" required>
+    <form id="form">
+        <input id="age" placeholder="Age">
+        <input id="height" placeholder="Height">
+        <input id="weight" placeholder="Weight">
 
-        <select name="medical_condition">
+        <select id="medical">
             <option value="no">No Medical Condition</option>
             <option value="yes">Medical Condition</option>
         </select>
@@ -22,6 +23,107 @@
         <button type="submit">Get Result</button>
     </form>
 </div>
+
+<!-- RESULT POPUP -->
+<div id="resultModal" class="modal">
+    <div class="modal-content">
+        <h2>Result</h2>
+        <p id="bmi"></p>
+        <p id="category"></p>
+
+        <ul id="activities"></ul>
+
+        <button onclick="showDiet()">Show Diet Plan</button>
+        <button onclick="closeResult()">Close</button>
+    </div>
+</div>
+
+<!-- DIET POPUP -->
+<div id="dietModal" class="modal">
+    <div class="modal-content">
+        <h2>Diet Plan</h2>
+        <p id="dietBmi"></p>
+        <p id="dietCategory"></p>
+
+        <canvas id="chart"></canvas>
+
+        <table id="foodTable"></table>
+
+        <button onclick="closeDiet()">Close</button>
+    </div>
+</div>
+
+<script>
+let chartInstance;
+
+document.getElementById("form").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    fetch("/calculate", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            height: document.getElementById("height").value,
+            weight: document.getElementById("weight").value,
+            medical: document.getElementById("medical").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("bmi").innerText = "BMI: " + data.bmi;
+        document.getElementById("category").innerText = "Category: " + data.category;
+
+        let actList = document.getElementById("activities");
+        actList.innerHTML = "";
+        data.activities.forEach(a => {
+            let li = document.createElement("li");
+            li.innerText = a;
+            actList.appendChild(li);
+        });
+
+        window.dietData = data;
+
+        document.getElementById("resultModal").style.display = "flex";
+    });
+});
+
+function closeResult() {
+    document.getElementById("resultModal").style.display = "none";
+}
+
+function showDiet() {
+    closeResult();
+
+    let data = window.dietData;
+
+    document.getElementById("dietBmi").innerText = "BMI: " + data.bmi;
+    document.getElementById("dietCategory").innerText = "Category: " + data.category;
+
+    let table = document.getElementById("foodTable");
+    table.innerHTML = "<tr><th>Type</th><th>Foods</th></tr>";
+
+    for (let key in data.foods) {
+        table.innerHTML += `<tr><td>${key}</td><td>${data.foods[key]}</td></tr>`;
+    }
+
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(document.getElementById("chart"), {
+        type: "pie",
+        data: {
+            labels: data.labels,
+            datasets: [{ data: data.chart_data }]
+        }
+    });
+
+    document.getElementById("dietModal").style.display = "flex";
+}
+
+function closeDiet() {
+    document.getElementById("dietModal").style.display = "none";
+}
+</script>
 
 </body>
 </html>
