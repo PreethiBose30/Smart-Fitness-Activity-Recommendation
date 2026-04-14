@@ -16,25 +16,18 @@
     <h2>Fitness Recommendation</h2>
 
     <form method="POST">
-        <label>Age</label>
-        <input name="age" value="{{ age }}">
+        <input name="age" placeholder="Age" value="{{ age }}">
+        <input name="height" placeholder="Height (cm or m)" value="{{ height }}">
+        <input name="weight" placeholder="Weight (kg)" value="{{ weight }}">
 
-        <label>Height (m or cm)</label>
-        <input name="height" value="{{ height }}">
-
-        <label>Weight (kg)</label>
-        <input name="weight" value="{{ weight }}">
-
-        <label>Activity</label>
         <select name="activity_level">
             <option value="beginner" {% if activity=="beginner" %}selected{% endif %}>Beginner</option>
             <option value="active" {% if activity=="active" %}selected{% endif %}>Active</option>
         </select>
 
-        <label>Medical Condition</label>
         <select name="medical_condition">
-            <option value="no" {% if medical=="no" %}selected{% endif %}>No</option>
-            <option value="yes" {% if medical=="yes" %}selected{% endif %}>Yes</option>
+            <option value="no" {% if medical=="no" %}selected{% endif %}>No medical issues</option>
+            <option value="yes" {% if medical=="yes" %}selected{% endif %}>Have condition</option>
         </select>
 
         <button type="submit">Get Recommendation</button>
@@ -43,19 +36,11 @@
     {% if bmi is not none %}
     <div class="result">
         <h3>BMI: {{ bmi }}</h3>
-        <h4>Category: {{ category }}</h4>
+        <h4>{{ category }}</h4>
 
-        <h4>Recommended Activities:</h4>
         <ul>
             {% for r in recommendations %}
             <li>{{ r }}</li>
-            {% endfor %}
-        </ul>
-
-        <h4>Notes:</h4>
-        <ul>
-            {% for n in notes %}
-            <li>{{ n }}</li>
             {% endfor %}
         </ul>
     </div>
