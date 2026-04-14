@@ -63,11 +63,11 @@ def calculate():
     age = int(data["age"])
     height = float(data["height"])
     weight = float(data["weight"])
-    medical = data["medical"]
     goal = data["goal"]
+    medical = data["medical"]
 
     if height > 3:
-        height /= 100
+        height = height / 100
 
     bmi = round(weight / (height ** 2), 2)
 
@@ -82,7 +82,6 @@ def calculate():
         "bmi": bmi,
         "category": category,
         "activities": activities,
-        "notes": notes,
         "labels": labels,
         "chart_data": chart_data,
         "foods": foods,
