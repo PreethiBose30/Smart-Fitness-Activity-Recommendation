@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fitness App</title>
+    <title>Smart Fitness App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
+<div class="header">
+    Smart Fitness Recommendation System
+    <button onclick="toggleDark()">🌙</button>
+</div>
+
 <div class="container">
-    <h2>Enter Your Details</h2>
+    <h2>Enter Details</h2>
 
     <form id="form">
         <input id="age" placeholder="Age" required>
@@ -28,31 +33,30 @@
 
         <button type="submit">Get Result</button>
     </form>
+
+    <p id="progress"></p>
 </div>
 
-<!-- RESULT POPUP -->
+<!-- RESULT MODAL -->
 <div id="resultModal" class="modal">
     <div class="modal-content">
-        <h2>Your Results</h2>
-
+        <h2>Results</h2>
         <p id="bmi"></p>
         <p id="category"></p>
         <p id="calories"></p>
         <p id="water"></p>
         <p id="workout"></p>
-
         <ul id="activities"></ul>
 
-        <button onclick="showDiet()">Show Diet Plan</button>
+        <button onclick="showDiet()">Show Diet</button>
         <button onclick="closeResult()">Close</button>
     </div>
 </div>
 
-<!-- DIET POPUP -->
+<!-- DIET MODAL -->
 <div id="dietModal" class="modal">
     <div class="modal-content">
         <h2>Diet Plan</h2>
-
         <p id="dietBmi"></p>
         <p id="dietCategory"></p>
 
@@ -66,9 +70,17 @@
     </div>
 </div>
 
+<div class="footer">MDP Project</div>
+
 <script>
 let chartInstance;
 
+// DARK MODE
+function toggleDark() {
+    document.body.classList.toggle("dark");
+}
+
+// FORM SUBMIT
 document.getElementById("form").addEventListener("submit", function(e) {
     e.preventDefault();
 
@@ -76,74 +88,70 @@ document.getElementById("form").addEventListener("submit", function(e) {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-            age: document.getElementById("age").value,
-            height: document.getElementById("height").value,
-            weight: document.getElementById("weight").value,
-            goal: document.getElementById("goal").value,
-            medical: document.getElementById("medical").value
+            age: age.value,
+            height: height.value,
+            weight: weight.value,
+            goal: goal.value,
+            medical: medical.value
         })
     })
     .then(res => res.json())
     .then(data => {
 
-        document.getElementById("bmi").innerText = "BMI: " + data.bmi;
-        document.getElementById("category").innerText = "Category: " + data.category;
-        document.getElementById("calories").innerText = "Daily Calories: " + data.calories;
-        document.getElementById("water").innerText = "Water Intake: " + data.water + " L/day";
-        document.getElementById("workout").innerText = "Workout Time: " + data.workout;
+        // Progress tracking
+        let lastBMI = localStorage.getItem("bmi");
+        if (lastBMI) {
+            document.getElementById("progress").innerText =
+                "Previous BMI: " + lastBMI + " → Now: " + data.bmi;
+        }
+        localStorage.setItem("bmi", data.bmi);
 
-        let list = document.getElementById("activities");
-        list.innerHTML = "";
+        bmi.innerText = "BMI: " + data.bmi;
+        category.innerText = "Category: " + data.category;
+        calories.innerText = "Calories: " + data.calories;
+        water.innerText = "Water: " + data.water + " L";
+        workout.innerText = "Workout: " + data.workout;
+
+        activities.innerHTML = "";
         data.activities.forEach(a => {
-            let li = document.createElement("li");
-            li.innerText = a;
-            list.appendChild(li);
+            activities.innerHTML += "<li>" + a + "</li>";
         });
 
         window.dietData = data;
-        document.getElementById("resultModal").style.display = "flex";
+        resultModal.style.display = "flex";
     });
 });
 
-function closeResult() {
-    document.getElementById("resultModal").style.display = "none";
-}
-
+// SHOW DIET
 function showDiet() {
-    closeResult();
+    resultModal.style.display = "none";
 
     let data = window.dietData;
 
-    document.getElementById("dietBmi").innerText = "BMI: " + data.bmi;
-    document.getElementById("dietCategory").innerText = "Category: " + data.category;
+    dietBmi.innerText = "BMI: " + data.bmi;
+    dietCategory.innerText = "Category: " + data.category;
 
-    let table = document.getElementById("foodTable");
-    table.innerHTML = "<tr><th>Type</th><th>Foods</th></tr>";
-
+    foodTable.innerHTML = "<tr><th>Type</th><th>Foods</th></tr>";
     for (let key in data.foods) {
-        table.innerHTML += `<tr><td>${key}</td><td>${data.foods[key]}</td></tr>`;
+        foodTable.innerHTML += `<tr><td>${key}</td><td>${data.foods[key]}</td></tr>`;
     }
 
     if (chartInstance) chartInstance.destroy();
 
-    chartInstance = new Chart(document.getElementById("chart"), {
+    chartInstance = new Chart(chart, {
         type: "pie",
         data: {
             labels: data.labels,
             datasets: [{ data: data.chart_data }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
+        options: { maintainAspectRatio: false }
     });
 
-    document.getElementById("dietModal").style.display = "flex";
+    dietModal.style.display = "flex";
 }
 
-function closeDiet() {
-    document.getElementById("dietModal").style.display = "none";
-}
+function closeResult() { resultModal.style.display = "none"; }
+function closeDiet() { dietModal.style.display = "none"; }
 </script>
 
 </body>
