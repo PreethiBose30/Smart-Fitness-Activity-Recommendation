@@ -1,22 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Smart Fitness App</title>
+    <title>Fitness App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
-    <span>Smart Fitness Recommendation System</span>
-    <button onclick="toggleDark()">🌙</button>
+    <span>Fitness App</span>
 </div>
 
-<!-- CENTER CONTENT -->
 <div class="main">
 <div class="container">
-    <h2>Enter Your Details</h2>
+    <h2>Enter Details</h2>
 
     <form id="form">
 
@@ -45,7 +42,7 @@
         </div>
 
         <div class="form-group">
-            <label>Medical Condition</label>
+            <label>Medical</label>
             <select id="medical">
                 <option value="no">No</option>
                 <option value="yes">Yes</option>
@@ -54,17 +51,13 @@
 
         <button type="submit">Get Result</button>
     </form>
-
-    <p id="progress"></p>
 </div>
 </div>
 
-<!-- RESULT MODAL -->
+<!-- RESULT -->
 <div id="resultModal" class="modal">
     <div class="modal-content">
-        <h2>Your Results</h2>
-
-        <p id="bmi"></p>
+        <h3 id="bmi"></h3>
         <p id="category"></p>
         <p id="calories"></p>
         <p id="water"></p>
@@ -72,130 +65,81 @@
 
         <ul id="activities"></ul>
 
-        <button onclick="showDiet()">Show Diet Plan</button>
-        <button onclick="closeResult()">Close</button>
+        <button onclick="showDiet()">Show Diet</button>
     </div>
 </div>
 
-<!-- DIET MODAL -->
+<!-- DIET -->
 <div id="dietModal" class="modal">
     <div class="modal-content">
-        <h2>Diet Plan</h2>
-
-        <p id="dietBmi"></p>
-        <p id="dietCategory"></p>
-
         <div class="chart-box">
             <canvas id="chart"></canvas>
         </div>
-
         <table id="foodTable"></table>
-
-        <button onclick="closeDiet()">Close</button>
     </div>
 </div>
 
 <script>
-let chartInstance;
+document.addEventListener("DOMContentLoaded", function () {
 
-document.getElementById("form").addEventListener("submit", function(e) {
+document.getElementById("form").addEventListener("submit", function(e){
     e.preventDefault();
 
-    console.log("Form submitted");  // DEBUG
-
-    let age = document.getElementById("age").value;
-    let height = document.getElementById("height").value;
-    let weight = document.getElementById("weight").value;
-    let goal = document.getElementById("goal").value;
-    let medical = document.getElementById("medical").value;
-
     fetch("/calculate", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            age: age,
-            height: height,
-            weight: weight,
-            goal: goal,
-            medical: medical
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            age:age.value,
+            height:height.value,
+            weight:weight.value,
+            goal:goal.value,
+            medical:medical.value
         })
     })
-    .then(response => {
-        console.log("Response received");
-        return response.json();
-    })
-    .then(data => {
-        console.log("Data:", data);
+    .then(res=>res.json())
+    .then(data=>{
 
-        document.getElementById("bmi").innerText = "BMI: " + data.bmi;
-        document.getElementById("category").innerText = "Category: " + data.category;
-        document.getElementById("calories").innerText = "Calories: " + data.calories;
-        document.getElementById("water").innerText = "Water: " + data.water + " L";
-        document.getElementById("workout").innerText = "Workout: " + data.workout;
+        bmi.innerText = "BMI: "+data.bmi;
+        category.innerText = "Category: "+data.category;
+        calories.innerText = "Calories: "+data.calories;
+        water.innerText = "Water: "+data.water;
+        workout.innerText = "Workout: "+data.workout;
 
-        let list = document.getElementById("activities");
-        list.innerHTML = "";
-        data.activities.forEach(a => {
-            let li = document.createElement("li");
-            li.innerText = a;
-            list.appendChild(li);
+        activities.innerHTML="";
+        data.activities.forEach(a=>{
+            activities.innerHTML += "<li>"+a+"</li>";
         });
 
-        window.dietData = data;
+        window.dataStore = data;
 
-        // 🔥 THIS IS THE IMPORTANT LINE
-        document.getElementById("resultModal").style.display = "flex";
-    })
-    .catch(error => {
-        console.error("ERROR:", error);
-        alert("Backend not responding or error in code");
+        resultModal.style.display="flex";
     });
+
 });
 
-// Close functions
-function closeResult() {
-    document.getElementById("resultModal").style.display = "none";
-}
+});
 
-function closeDiet() {
-    document.getElementById("dietModal").style.display = "none";
-}
+function showDiet(){
+    resultModal.style.display="none";
 
-function showDiet() {
-    closeResult();
+    let data = window.dataStore;
 
-    let data = window.dietData;
+    foodTable.innerHTML="<tr><th>Type</th><th>Foods</th></tr>";
 
-    document.getElementById("dietBmi").innerText = "BMI: " + data.bmi;
-    document.getElementById("dietCategory").innerText = "Category: " + data.category;
-
-    let table = document.getElementById("foodTable");
-    table.innerHTML = "<tr><th>Type</th><th>Foods</th></tr>";
-
-    for (let key in data.foods) {
-        table.innerHTML += `<tr><td>${key}</td><td>${data.foods[key]}</td></tr>`;
+    for(let k in data.foods){
+        foodTable.innerHTML+=`<tr><td>${k}</td><td>${data.foods[k]}</td></tr>`;
     }
 
-    if (chartInstance) chartInstance.destroy();
-
-    chartInstance = new Chart(document.getElementById("chart"), {
-        type: "pie",
-        data: {
-            labels: data.labels,
-            datasets: [{ data: data.chart_data }]
+    new Chart(chart,{
+        type:"pie",
+        data:{
+            labels:data.labels,
+            datasets:[{data:data.chart_data}]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
+        options:{maintainAspectRatio:false}
     });
 
-    document.getElementById("dietModal").style.display = "flex";
-}
-
-// Dark mode
-function toggleDark() {
-    document.body.classList.toggle("dark");
+    dietModal.style.display="flex";
 }
 </script>
 
