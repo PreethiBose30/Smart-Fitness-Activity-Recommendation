@@ -12,8 +12,8 @@
 
     <form id="form">
         <input id="age" placeholder="Age" required>
-        <input id="height" placeholder="Height" required>
-        <input id="weight" placeholder="Weight" required>
+        <input id="height" placeholder="Height (cm or m)" required>
+        <input id="weight" placeholder="Weight (kg)" required>
 
         <select id="medical">
             <option value="no">No Medical Condition</option>
@@ -30,7 +30,6 @@
         <h2>Result</h2>
         <p id="bmi"></p>
         <p id="category"></p>
-
         <ul id="activities"></ul>
 
         <button onclick="showDiet()">Show Diet Plan</button>
@@ -45,7 +44,9 @@
         <p id="dietBmi"></p>
         <p id="dietCategory"></p>
 
-        <canvas id="chart"></canvas>
+        <div class="chart-box">
+            <canvas id="chart"></canvas>
+        </div>
 
         <table id="foodTable"></table>
 
@@ -83,7 +84,6 @@ document.getElementById("form").addEventListener("submit", function(e) {
         });
 
         window.dietData = data;
-
         document.getElementById("resultModal").style.display = "flex";
     });
 });
@@ -113,7 +113,13 @@ function showDiet() {
         type: "pie",
         data: {
             labels: data.labels,
-            datasets: [{ data: data.chart_data }]
+            datasets: [{
+                data: data.chart_data
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
         }
     });
 
