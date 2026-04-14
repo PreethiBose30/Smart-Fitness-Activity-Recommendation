@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -22,104 +22,86 @@ def get_recommendations(bmi, medical):
     return activities, notes, category
 
 
-def get_diet_plan(category, medical):
+def get_diet_plan(category):
     if category == "Underweight":
-        return {
-            "labels": ["Proteins", "Carbs", "Fats"],
-            "data": [40, 40, 20],
-            "foods": {
-                "Proteins": "Milk, Eggs, Paneer",
-                "Carbs": "Rice, Bread, Fruits",
-                "Fats": "Nuts, Butter"
-            }
+        return ["Proteins", "Carbs", "Fats"], [40, 40, 20], {
+            "Proteins": "Milk, Eggs, Paneer",
+            "Carbs": "Rice, Bread, Fruits",
+            "Fats": "Nuts, Butter"
         }
 
     elif category == "Normal":
-        return {
-            "labels": ["Proteins", "Carbs", "Fats"],
-            "data": [30, 50, 20],
-            "foods": {
-                "Proteins": "Chicken, Dal",
-                "Carbs": "Rice, Chapati",
-                "Fats": "Oil, Nuts"
-            }
+        return ["Proteins", "Carbs", "Fats"], [30, 50, 20], {
+            "Proteins": "Chicken, Dal",
+            "Carbs": "Rice, Chapati",
+            "Fats": "Oil, Nuts"
         }
 
-    else:  # Overweight
-        return {
-            "labels": ["Proteins", "Carbs", "Fats"],
-            "data": [35, 40, 25],
-            "foods": {
-                "Proteins": "Lean meat, Lentils",
-                "Carbs": "Oats, Vegetables",
-                "Fats": "Olive oil"
-            }
+    else:
+        return ["Proteins", "Carbs", "Fats"], [35, 40, 25], {
+            "Proteins": "Lean meat, Lentils",
+            "Carbs": "Oats, Vegetables",
+            "Fats": "Olive oil"
         }
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    bmi = None
-    category = None
-    recommendations = []
-    notes = []
-
-    age = ""
-    height = ""
-    weight = ""
-    activity = ""
-    medical = ""
-
     if request.method == "POST":
         age = request.form["age"]
         height = request.form["height"]
         weight = request.form["weight"]
-        activity = request.form["activity_level"]
         medical = request.form["medical_condition"]
 
-        try:
-            height = float(height)
-            weight = float(weight)
+        height = float(height)
+        weight = float(weight)
 
-            if height > 3:
-                height = height / 100
+        if height > 3:
+            height = height / 100
 
-            bmi = round(weight / (height ** 2), 2)
+        bmi = round(weight / (height ** 2), 2)
 
-            recommendations, notes, category = get_recommendations(bmi, medical)
+        activities, notes, category = get_recommendations(bmi, medical)
 
-        except:
-            bmi = None
+        return redirect(url_for("result",
+                                bmi=bmi,
+                                category=category,
+                                medical=medical))
 
-    return render_template("index.html",
+    return render_template("index.html")
+
+
+@app.route("/result")
+def result():
+    bmi = request.args.get("bmi")
+    category = request.args.get("category")
+    medical = request.args.get("medical")
+
+    bmi = float(bmi)
+
+    activities, notes, category = get_recommendations(bmi, medical)
+
+    return render_template("result.html",
                            bmi=bmi,
                            category=category,
-                           recommendations=recommendations,
+                           activities=activities,
                            notes=notes,
-                           age=age,
-                           height=height,
-                           weight=weight,
-                           activity=activity,
                            medical=medical)
 
 
 @app.route("/diet")
 def diet():
+    bmi = request.args.get("bmi")
     category = request.args.get("category")
-    medical = request.args.get("medical")
 
-    diet_plan = get_diet_plan(category, medical)
+    labels, data, foods = get_diet_plan(category)
 
     return render_template("diet.html",
-                           labels=diet_plan["labels"],
-                           data=diet_plan["data"],
-                           foods=diet_plan["foods"],
-                           category=category)
-
-
-@app.route("/about")
-def about():
-    return render_template("about.html")
+                           bmi=bmi,
+                           category=category,
+                           labels=labels,
+                           data=data,
+                           foods=foods)
 
 
 if __name__ == "__main__":
