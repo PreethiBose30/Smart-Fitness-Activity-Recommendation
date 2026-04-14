@@ -41,19 +41,14 @@ def get_diet_plan(category):
         }
 
 
-# 🔥 NEW: calorie calculation
 def calculate_calories(weight, height, age, goal):
-    # simple BMR formula
     bmr = 10 * weight + 6.25 * height - 5 * age + 5
 
     if goal == "loss":
-        calories = bmr - 300
+        return int(bmr - 300)
     elif goal == "gain":
-        calories = bmr + 300
-    else:
-        calories = bmr
-
-    return int(calories)
+        return int(bmr + 300)
+    return int(bmr)
 
 
 @app.route("/")
@@ -72,7 +67,7 @@ def calculate():
     goal = data["goal"]
 
     if height > 3:
-        height = height / 100
+        height /= 100
 
     bmi = round(weight / (height ** 2), 2)
 
@@ -80,10 +75,8 @@ def calculate():
     labels, chart_data, foods = get_diet_plan(category)
 
     calories = calculate_calories(weight, height * 100, age, goal)
-
-    # 🔥 NEW FEATURES
-    water = round(weight * 0.033, 2)  # liters
-    workout_time = "30-45 mins" if category == "Normal" else "45-60 mins"
+    water = round(weight * 0.033, 2)
+    workout = "30–45 mins" if category == "Normal" else "45–60 mins"
 
     return jsonify({
         "bmi": bmi,
@@ -95,7 +88,7 @@ def calculate():
         "foods": foods,
         "calories": calories,
         "water": water,
-        "workout": workout_time
+        "workout": workout
     })
 
 
