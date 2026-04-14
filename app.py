@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
@@ -29,14 +29,12 @@ def get_diet_plan(category):
             "Carbs": "Rice, Bread, Fruits",
             "Fats": "Nuts, Butter"
         }
-
     elif category == "Normal":
         return ["Proteins", "Carbs", "Fats"], [30, 50, 20], {
             "Proteins": "Chicken, Dal",
             "Carbs": "Rice, Chapati",
             "Fats": "Oil, Nuts"
         }
-
     else:
         return ["Proteins", "Carbs", "Fats"], [35, 40, 25], {
             "Proteins": "Lean meat, Lentils",
@@ -45,63 +43,37 @@ def get_diet_plan(category):
         }
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def index():
-    if request.method == "POST":
-        age = request.form["age"]
-        height = request.form["height"]
-        weight = request.form["weight"]
-        medical = request.form["medical_condition"]
-
-        height = float(height)
-        weight = float(weight)
-
-        if height > 3:
-            height = height / 100
-
-        bmi = round(weight / (height ** 2), 2)
-
-        activities, notes, category = get_recommendations(bmi, medical)
-
-        return redirect(url_for("result",
-                                bmi=bmi,
-                                category=category,
-                                medical=medical))
-
     return render_template("index.html")
 
 
-@app.route("/result")
-def result():
-    bmi = request.args.get("bmi")
-    category = request.args.get("category")
-    medical = request.args.get("medical")
+@app.route("/calculate", methods=["POST"])
+def calculate():
+    data = request.get_json()
 
-    bmi = float(bmi)
+    height = float(data["height"])
+    weight = float(data["weight"])
+    medical = data["medical"]
+
+    if height > 3:
+        height = height / 100
+
+    bmi = round(weight / (height ** 2), 2)
 
     activities, notes, category = get_recommendations(bmi, medical)
 
-    return render_template("result.html",
-                           bmi=bmi,
-                           category=category,
-                           activities=activities,
-                           notes=notes,
-                           medical=medical)
+    labels, chart_data, foods = get_diet_plan(category)
 
-
-@app.route("/diet")
-def diet():
-    bmi = request.args.get("bmi")
-    category = request.args.get("category")
-
-    labels, data, foods = get_diet_plan(category)
-
-    return render_template("diet.html",
-                           bmi=bmi,
-                           category=category,
-                           labels=labels,
-                           data=data,
-                           foods=foods)
+    return jsonify({
+        "bmi": bmi,
+        "category": category,
+        "activities": activities,
+        "notes": notes,
+        "labels": labels,
+        "chart_data": chart_data,
+        "foods": foods
+    })
 
 
 if __name__ == "__main__":
