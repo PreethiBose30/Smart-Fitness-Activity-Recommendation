@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Smart Fitness Recommendation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+<<<<<<< HEAD
 
 <h1>Smart Fitness Activity Recommendation System</h1>
 
@@ -58,6 +59,49 @@
 
 <h2>Diet Plan:</h2>
 <p>{{ diet_plan }}</p>
+=======
+
+<div class="navbar">
+    <a href="/">Home</a>
+    <a href="/diet">Diet</a>
+    <a href="/about">About</a>
+</div>
+
+<div class="container">
+    <h2>Fitness Recommendation</h2>
+
+    <form method="POST">
+        Age: <input name="age" value="{{ age }}"><br><br>
+        Height: <input name="height" value="{{ height }}"><br><br>
+        Weight: <input name="weight" value="{{ weight }}"><br><br>
+
+        Activity:
+        <select name="activity_level">
+            <option value="beginner">Beginner</option>
+            <option value="active">Active</option>
+        </select><br><br>
+
+        Medical:
+        <select name="medical_condition">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if bmi %}
+    <h3>BMI: {{ bmi }}</h3>
+    <h4>Category: {{ category }}</h4>
+
+    <ul>
+        {% for r in recommendations %}
+        <li>{{ r }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+>>>>>>> 1e3b0c3f62db37affb0544fb8c85f6f2f7923b3f
 
 </body>
 </html>
