@@ -1,158 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Smart Fitness App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-
-<div class="header">
-    Smart Fitness Recommendation System
-    <button onclick="toggleDark()">🌙</button>
-</div>
-
+<div class="main">
 <div class="container">
-    <h2>Enter Details</h2>
+    <h2>Enter Your Details</h2>
 
     <form id="form">
-        <input id="age" placeholder="Age" required>
-        <input id="height" placeholder="Height" required>
-        <input id="weight" placeholder="Weight" required>
 
-        <select id="goal">
-            <option value="maintain">Maintain</option>
-            <option value="loss">Weight Loss</option>
-            <option value="gain">Weight Gain</option>
-        </select>
+        <div class="form-group">
+            <label>Age</label>
+            <input id="age" required>
+        </div>
 
-        <select id="medical">
-            <option value="no">No Medical Condition</option>
-            <option value="yes">Medical Condition</option>
-        </select>
+        <div class="form-group">
+            <label>Height (cm)</label>
+            <input id="height" required>
+        </div>
+
+        <div class="form-group">
+            <label>Weight (kg)</label>
+            <input id="weight" required>
+        </div>
+
+        <div class="form-group">
+            <label>Goal</label>
+            <select id="goal">
+                <option value="maintain">Maintain</option>
+                <option value="loss">Weight Loss</option>
+                <option value="gain">Weight Gain</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Medical Condition</label>
+            <select id="medical">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+        </div>
 
         <button type="submit">Get Result</button>
     </form>
-
-    <p id="progress"></p>
 </div>
-
-<!-- RESULT MODAL -->
-<div id="resultModal" class="modal">
-    <div class="modal-content">
-        <h2>Results</h2>
-        <p id="bmi"></p>
-        <p id="category"></p>
-        <p id="calories"></p>
-        <p id="water"></p>
-        <p id="workout"></p>
-        <ul id="activities"></ul>
-
-        <button onclick="showDiet()">Show Diet</button>
-        <button onclick="closeResult()">Close</button>
-    </div>
 </div>
-
-<!-- DIET MODAL -->
-<div id="dietModal" class="modal">
-    <div class="modal-content">
-        <h2>Diet Plan</h2>
-        <p id="dietBmi"></p>
-        <p id="dietCategory"></p>
-
-        <div class="chart-box">
-            <canvas id="chart"></canvas>
-        </div>
-
-        <table id="foodTable"></table>
-
-        <button onclick="closeDiet()">Close</button>
-    </div>
-</div>
-
-<div class="footer">MDP Project</div>
-
-<script>
-let chartInstance;
-
-// DARK MODE
-function toggleDark() {
-    document.body.classList.toggle("dark");
-}
-
-// FORM SUBMIT
-document.getElementById("form").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    fetch("/calculate", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            age: age.value,
-            height: height.value,
-            weight: weight.value,
-            goal: goal.value,
-            medical: medical.value
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        // Progress tracking
-        let lastBMI = localStorage.getItem("bmi");
-        if (lastBMI) {
-            document.getElementById("progress").innerText =
-                "Previous BMI: " + lastBMI + " → Now: " + data.bmi;
-        }
-        localStorage.setItem("bmi", data.bmi);
-
-        bmi.innerText = "BMI: " + data.bmi;
-        category.innerText = "Category: " + data.category;
-        calories.innerText = "Calories: " + data.calories;
-        water.innerText = "Water: " + data.water + " L";
-        workout.innerText = "Workout: " + data.workout;
-
-        activities.innerHTML = "";
-        data.activities.forEach(a => {
-            activities.innerHTML += "<li>" + a + "</li>";
-        });
-
-        window.dietData = data;
-        resultModal.style.display = "flex";
-    });
-});
-
-// SHOW DIET
-function showDiet() {
-    resultModal.style.display = "none";
-
-    let data = window.dietData;
-
-    dietBmi.innerText = "BMI: " + data.bmi;
-    dietCategory.innerText = "Category: " + data.category;
-
-    foodTable.innerHTML = "<tr><th>Type</th><th>Foods</th></tr>";
-    for (let key in data.foods) {
-        foodTable.innerHTML += `<tr><td>${key}</td><td>${data.foods[key]}</td></tr>`;
-    }
-
-    if (chartInstance) chartInstance.destroy();
-
-    chartInstance = new Chart(chart, {
-        type: "pie",
-        data: {
-            labels: data.labels,
-            datasets: [{ data: data.chart_data }]
-        },
-        options: { maintainAspectRatio: false }
-    });
-
-    dietModal.style.display = "flex";
-}
-
-function closeResult() { resultModal.style.display = "none"; }
-function closeDiet() { dietModal.style.display = "none"; }
-</script>
-
-</body>
-</html>
