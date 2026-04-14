@@ -98,14 +98,10 @@
 <script>
 let chartInstance;
 
-// DARK MODE
-function toggleDark() {
-    document.body.classList.toggle("dark");
-}
-
-// FORM SUBMIT
 document.getElementById("form").addEventListener("submit", function(e) {
     e.preventDefault();
+
+    console.log("Form submitted");  // DEBUG
 
     let age = document.getElementById("age").value;
     let height = document.getElementById("height").value;
@@ -124,16 +120,12 @@ document.getElementById("form").addEventListener("submit", function(e) {
             medical: medical
         })
     })
-    .then(res => res.json())
+    .then(response => {
+        console.log("Response received");
+        return response.json();
+    })
     .then(data => {
-
-        // Progress
-        let lastBMI = localStorage.getItem("bmi");
-        if (lastBMI) {
-            document.getElementById("progress").innerText =
-                "Previous BMI: " + lastBMI + " → Now: " + data.bmi;
-        }
-        localStorage.setItem("bmi", data.bmi);
+        console.log("Data:", data);
 
         document.getElementById("bmi").innerText = "BMI: " + data.bmi;
         document.getElementById("category").innerText = "Category: " + data.category;
@@ -151,20 +143,24 @@ document.getElementById("form").addEventListener("submit", function(e) {
 
         window.dietData = data;
 
+        // 🔥 THIS IS THE IMPORTANT LINE
         document.getElementById("resultModal").style.display = "flex";
     })
-    .catch(err => {
-        console.log("ERROR:", err);
-        alert("Something went wrong. Check console.");
+    .catch(error => {
+        console.error("ERROR:", error);
+        alert("Backend not responding or error in code");
     });
 });
 
-// CLOSE RESULT
+// Close functions
 function closeResult() {
     document.getElementById("resultModal").style.display = "none";
 }
 
-// SHOW DIET
+function closeDiet() {
+    document.getElementById("dietModal").style.display = "none";
+}
+
 function showDiet() {
     closeResult();
 
@@ -197,9 +193,9 @@ function showDiet() {
     document.getElementById("dietModal").style.display = "flex";
 }
 
-// CLOSE DIET
-function closeDiet() {
-    document.getElementById("dietModal").style.display = "none";
+// Dark mode
+function toggleDark() {
+    document.body.classList.toggle("dark");
 }
 </script>
 
