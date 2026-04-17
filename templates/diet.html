@@ -16,7 +16,7 @@
 </div>
 
 <div class="container">
-<h2>Diet Plan</h2>
+<h2>Diet Plan ({{ category }})</h2>
 
 <!-- CHART -->
 <canvas id="chart" style="margin-bottom:20px;"></canvas>
@@ -40,9 +40,9 @@
 new Chart(document.getElementById("chart"), {
     type: "pie",
     data: {
-        labels: ["Proteins", "Carbs", "Fats"],
+        labels: {{ labels|tojson }},
         datasets: [{
-            data: [30, 50, 20],
+            data: {{ data|tojson }},
             backgroundColor: ["#4CAF50", "#2196F3", "#FF9800"]
         }]
     }
