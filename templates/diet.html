@@ -1,50 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Diet Plan</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Diet</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
+<div class="sidebar">
+<h2>Fitness App</h2>
+<a href="/">🏠 Home</a>
+<a href="/history">📊 History</a>
+<a href="/logout">🚪 Logout</a>
+</div>
+
+<div class="main">
 <div class="container">
-    <h2>Diet Plan</h2>
 
-    <h3>BMI: {{ bmi }}</h3>
-    <h4>Category: {{ category }}</h4>
-    <h4>Type: {{ food_type }}</h4>
+<h2>Diet Plan</h2>
 
-    <canvas id="chart"></canvas>
+<canvas id="chart"></canvas>
 
-    <table>
-        <tr>
-            <th>Category</th>
-            <th>Foods</th>
-        </tr>
+<table>
+<tr><th>Type</th><th>Foods</th></tr>
+{% for key, value in foods.items() %}
+<tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+{% endfor %}
+</table>
 
-        {% for key, value in foods.items() %}
-        <tr>
-            <td>{{ key }}</td>
-            <td>{{ value }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <a href="/">
-        <button>Home</button>
-    </a>
+</div>
 </div>
 
 <script>
 new Chart(document.getElementById("chart"), {
-    type: "pie",
-    data: {
-        labels: {{ labels|tojson }},
-        datasets: [{
-            data: {{ data|tojson }},
-            backgroundColor: ["#36a2eb", "#ff6384", "#ffcd56"]
-        }]
-    }
+type: "pie",
+data: {
+labels: {{ labels|tojson }},
+datasets: [{ data: {{ data|tojson }} }]
+}
 });
 </script>
 
