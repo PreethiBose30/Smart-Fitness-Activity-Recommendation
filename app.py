@@ -212,6 +212,36 @@ def diet():
                            meals=meals,
                            goal=goal)
 
+@app.route("/analytics")
+def analytics():
+    if "user" not in session:
+        return redirect("/login")
+
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+
+    c.execute("SELECT steps, date FROM history WHERE username=?", (session["user"],))
+    data = c.fetchall()
+    conn.close()
+
+    steps = [row[0] for row in data]
+    dates = [row[1] for row in data]
+
+    avg = sum(steps)//len(steps) if steps else 0
+
+    if avg > 7000:
+        insight = "🔥 Excellent! You're very active."
+    elif avg > 4000:
+        insight = "👍 Good, but you can improve."
+    else:
+        insight = "⚠️ Try to be more active daily."
+
+    return render_template("analytics.html",
+                           avg=avg,
+                           insight=insight,
+                           steps=steps,
+                           dates=dates)
+    
 # ---------- RUN ----------
 if __name__=="__main__":
     app.run(debug=True)
