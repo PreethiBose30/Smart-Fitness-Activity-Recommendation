@@ -7,32 +7,32 @@
 <body>
 
 <div class="sidebar">
-<h2>Fitness App</h2>
+<h2>💪 FitTrack</h2>
 <a href="/">🏠 Home</a>
 <a href="/history">📊 History</a>
 <a href="/logout">🚪 Logout</a>
 </div>
 
 <div class="main">
-<div class="container">
+<div class="card">
 
 <h2>Welcome {{ user }}</h2>
 
 <form method="POST">
-<input name="height" placeholder="Height" required>
-<input name="weight" placeholder="Weight" required>
+<input name="height" placeholder="Height (cm or m)" required>
+<input name="weight" placeholder="Weight (kg)" required>
 
 <select name="medical_condition">
-<option value="no">No Medical</option>
-<option value="yes">Medical</option>
+<option value="no">No Medical Condition</option>
+<option value="yes">Medical Condition</option>
 </select>
 
 <select name="food_type">
-<option value="veg">Veg</option>
-<option value="nonveg">Non-Veg</option>
+<option value="veg">Vegetarian</option>
+<option value="nonveg">Non-Vegetarian</option>
 </select>
 
-<button>Calculate</button>
+<button type="submit">Calculate</button>
 </form>
 
 </div>
