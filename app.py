@@ -13,18 +13,17 @@ def get_recommendations(bmi, medical):
         activities = ["Cardio", "Swimming", "Brisk walking"]
         category = "Overweight"
 
-    notes = []
     if medical == "yes":
-        notes.append("Avoid high intensity workouts")
+        activities.append("Consult doctor before workouts")
 
-    return activities, notes, category
+    return activities, category
 
 
 def get_diet_plan(category):
     if category == "Underweight":
         return ["Proteins", "Carbs", "Fats"], [40, 40, 20], {
             "Proteins": "Milk, Eggs, Paneer",
-            "Carbs": "Rice, Bread, Fruits",
+            "Carbs": "Rice, Bread",
             "Fats": "Nuts, Butter"
         }
     elif category == "Normal":
@@ -36,23 +35,13 @@ def get_diet_plan(category):
     else:
         return ["Proteins", "Carbs", "Fats"], [35, 40, 25], {
             "Proteins": "Lean meat, Lentils",
-            "Carbs": "Oats, Vegetables",
+            "Carbs": "Oats, Veggies",
             "Fats": "Olive oil"
         }
 
 
-def calculate_calories(weight, height, age, goal):
-    bmr = 10 * weight + 6.25 * height - 5 * age + 5
-
-    if goal == "loss":
-        return int(bmr - 300)
-    elif goal == "gain":
-        return int(bmr + 300)
-    return int(bmr)
-
-
 @app.route("/")
-def index():
+def home():
     return render_template("index.html")
 
 
@@ -66,15 +55,16 @@ def calculate():
     goal = data["goal"]
     medical = data["medical"]
 
+    # convert cm → meters if needed
     if height > 3:
         height = height / 100
 
     bmi = round(weight / (height ** 2), 2)
 
-    activities, notes, category = get_recommendations(bmi, medical)
+    activities, category = get_recommendations(bmi, medical)
     labels, chart_data, foods = get_diet_plan(category)
 
-    calories = calculate_calories(weight, height * 100, age, goal)
+    calories = int(10 * weight + 6.25 * (height * 100) - 5 * age)
     water = round(weight * 0.033, 2)
     workout = "30–45 mins" if category == "Normal" else "45–60 mins"
 
