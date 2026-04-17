@@ -4,7 +4,6 @@
 <title>Result</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 
 <div class="navbar">
@@ -15,34 +14,23 @@
 </div>
 
 <div class="container">
-
 <h2>Your Results</h2>
 
 <p><b>BMI:</b> {{ bmi }}</p>
 <p><b>Category:</b> {{ category }}</p>
-<p><b>Calories Needed:</b> {{ calories }}</p>
+<p><b>Suggested Goal:</b> {{ goal }}</p>
+<p><b>Calories:</b> {{ calories }}</p>
 
-<h3>Recommended Activities</h3>
 <ul>
 {% for a in activities %}
 <li>{{ a }}</li>
 {% endfor %}
 </ul>
 
-<h3>Notes</h3>
-<ul>
-{% for n in notes %}
-<li>{{ n }}</li>
-{% endfor %}
-</ul>
-
-<br>
-
 <a href="/diet?category={{ category }}&bmi={{ bmi }}">
-    <button>View Smart Diet Plan</button>
+<button>Smart Diet Plan</button>
 </a>
 
 </div>
-
 </body>
 </html>
