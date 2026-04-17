@@ -1,46 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Results</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<title>Result</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
+<div class="sidebar">
+<h2>Fitness App</h2>
+<a href="/">🏠 Home</a>
+<a href="/history">📊 History</a>
+<a href="/logout">🚪 Logout</a>
+</div>
+
+<div class="main">
 <div class="container">
-    <h2>Your Results</h2>
 
-    <h3>BMI: {{ bmi }}</h3>
-    <h4>Category: {{ category }}</h4>
-    <h4>Daily Calories Needed: {{ calories }} kcal</h4>
+<h2>Results</h2>
 
-    <!-- Progress Bar -->
-    <div style="background:#ddd; border-radius:10px;">
-        <div style="width: {{ bmi*2 }}%; background:green; padding:10px; color:white;">
-            BMI Level
-        </div>
-    </div>
+<p>BMI: {{ bmi }}</p>
+<p>Category: {{ category }}</p>
+<p>Calories: {{ calories }}</p>
 
-    <h4>Recommended Activities:</h4>
-    <ul>
-        {% for a in activities %}
-        <li>{{ a }}</li>
-        {% endfor %}
-    </ul>
+<ul>
+{% for a in activities %}
+<li>{{ a }}</li>
+{% endfor %}
+</ul>
 
-    <h4>Notes:</h4>
-    <ul>
-        {% for n in notes %}
-        <li>{{ n }}</li>
-        {% endfor %}
-    </ul>
+<a href="/diet?bmi={{ bmi }}&category={{ category }}&food_type={{ food_type }}">
+<button>Diet Plan</button>
+</a>
 
-    <a href="/diet?bmi={{ bmi }}&category={{ category }}&food_type={{ food_type }}">
-        <button>Show Diet Plan</button>
-    </a>
-
-    <a href="/">
-        <button>Home</button>
-    </a>
+</div>
 </div>
 
 </body>
