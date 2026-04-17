@@ -1,51 +1,67 @@
 body {
-    font-family: Arial;
-    background: #e8f5e9;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #dbeafe, #e0f7f4);
+}
+
+.navbar {
+    background: #2c3e50;
+    padding: 15px;
+    text-align: center;
+}
+
+.navbar a {
+    color: white;
+    margin: 15px;
+    text-decoration: none;
+    font-size: 18px;
 }
 
 .container {
-    width: 300px;
-    margin: auto;
-    margin-top: 100px;
+    width: 450px;
+    margin: 60px auto;
     background: white;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 6px 20px rgba(0,0,0,0.1);
 }
 
-input, button {
+h2 {
+    text-align: center;
+}
+
+input, select {
     width: 100%;
-    margin: 8px 0;
-    padding: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
 button {
-    background: green;
-    color: white;
-    border: none;
-}
-
-.modal {
-    display: none;
-    position: fixed;
     width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    justify-content: center;
-    align-items: center;
+    padding: 12px;
+    background: #27ae60;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
 }
 
-.modal-content {
-    background: white;
-    padding: 20px;
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f0f9ff;
     border-radius: 10px;
 }
 
 table {
     width: 100%;
-    margin-top: 10px;
+    margin-top: 20px;
+    border-collapse: collapse;
 }
 
-td, th {
+table, th, td {
     border: 1px solid #ccc;
     padding: 8px;
 }
