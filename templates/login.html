@@ -6,17 +6,23 @@
 </head>
 <body>
 
-<div class="container">
+<div class="auth-container">
+<div class="auth-card">
+
 <h2>Login</h2>
 
 <form method="POST">
-<input name="username" required>
-<input name="password" type="password" required>
+<input name="username" placeholder="Username" required>
+<input name="password" type="password" placeholder="Password" required>
 <button>Login</button>
 </form>
 
-<a href="/register"><button>Register</button></a>
+<p style="margin-top:10px;">
+Don't have an account?
+<a href="/register" style="color:white;"><b>Register</b></a>
+</p>
 
+</div>
 </div>
 
 </body>
