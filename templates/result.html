@@ -7,29 +7,45 @@
 <body>
 
 <div class="sidebar">
-<h2>Fitness App</h2>
+<h2>💪 FitTrack</h2>
 <a href="/">🏠 Home</a>
 <a href="/history">📊 History</a>
 <a href="/logout">🚪 Logout</a>
 </div>
 
 <div class="main">
-<div class="container">
+<div class="card">
 
-<h2>Results</h2>
+<h2>Your Results</h2>
 
-<p>BMI: {{ bmi }}</p>
-<p>Category: {{ category }}</p>
-<p>Calories: {{ calories }}</p>
+<div class="result-box">
+<p><b>BMI:</b> {{ bmi }}</p>
+<p><b>Category:</b> {{ category }}</p>
+<p><b>Calories:</b> {{ calories }} kcal</p>
+</div>
 
+<div class="progress">
+<div class="progress-bar" style="width: {{ bmi*2 }}%">
+{{ category }}
+</div>
+</div>
+
+<h3>Activities</h3>
 <ul>
 {% for a in activities %}
 <li>{{ a }}</li>
 {% endfor %}
 </ul>
 
+<h3>Notes</h3>
+<ul>
+{% for n in notes %}
+<li>{{ n }}</li>
+{% endfor %}
+</ul>
+
 <a href="/diet?bmi={{ bmi }}&category={{ category }}&food_type={{ food_type }}">
-<button>Diet Plan</button>
+<button>View Diet Plan</button>
 </a>
 
 </div>
