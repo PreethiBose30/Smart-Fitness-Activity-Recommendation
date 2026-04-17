@@ -1,25 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Result</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-
-<div class="navbar">
-<a href="/">Home</a>
-<a href="/history">History</a>
-<a href="/analytics">Analytics</a>
-<a href="/logout">Logout</a>
-</div>
-
 <div class="container">
-<h2>Your Results</h2>
+<div class="card">
 
-<p><b>BMI:</b> {{ bmi }}</p>
-<p><b>Category:</b> {{ category }}</p>
-<p><b>Suggested Goal:</b> {{ goal }}</p>
-<p><b>Calories:</b> {{ calories }}</p>
+<h2>Results</h2>
+
+<p>BMI: {{ bmi }}</p>
+<p>Category: {{ category }}</p>
+<p>Goal: {{ goal }}</p>
+<p>Calories: {{ calories }}</p>
 
 <ul>
 {% for a in activities %}
@@ -28,9 +15,8 @@
 </ul>
 
 <a href="/diet?category={{ category }}&bmi={{ bmi }}">
-<button>Smart Diet Plan</button>
+<button>Diet Plan</button>
 </a>
 
 </div>
-</body>
-</html>
+</div>
