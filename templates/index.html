@@ -7,10 +7,9 @@
 <body>
 
 <div class="container">
-    <h2>Enter Your Details</h2>
+    <h2>Welcome {{ user }}</h2>
 
     <form method="POST">
-        <input name="age" placeholder="Age" required>
         <input name="height" placeholder="Height (cm or m)" required>
         <input name="weight" placeholder="Weight (kg)" required>
 
@@ -26,6 +25,9 @@
 
         <button type="submit">Get Result</button>
     </form>
+
+    <a href="/history"><button>View History</button></a>
+    <a href="/logout"><button>Logout</button></a>
 </div>
 
 </body>
