@@ -8,13 +8,14 @@
 <body>
 
 <div class="sidebar">
-<h2>FitTrack</h2>
-<a href="/">Home</a>
-<a href="/history">History</a>
-<a href="/logout">Logout</a>
+    <h2>FitTrack</h2>
+    <a href="/">Home</a>
+    <a href="/history">History</a>
+    <a href="/logout">Logout</a>
 </div>
 
 <div class="main">
+
 <div class="card">
 
 <h2>Diet Plan</h2>
@@ -22,18 +23,28 @@
 <canvas id="chart"></canvas>
 
 <table>
-{% for key,value in foods.items() %}
-<tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+{% for key, value in foods.items() %}
+<tr>
+<td>{{ key }}</td>
+<td>{{ value }}</td>
+</tr>
 {% endfor %}
 </table>
 
 </div>
+
 </div>
 
 <script>
 new Chart(document.getElementById("chart"), {
-type:"pie",
-data:{labels:{{ labels|tojson }},datasets:[{data:{{ data|tojson }}}]}
+    type: "pie",
+    data: {
+        labels: {{ labels|tojson }},
+        datasets: [{
+            data: {{ data|tojson }},
+            backgroundColor: ["#6366f1","#22c55e","#f59e0b"]
+        }]
+    }
 });
 </script>
 
