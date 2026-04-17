@@ -10,59 +10,75 @@
     <h2>Fitness App</h2>
 
     <form id="form">
-        <input id="age" placeholder="Age" required>
         <input id="height" placeholder="Height (cm)" required>
         <input id="weight" placeholder="Weight (kg)" required>
+
+        <select id="diet">
+            <option value="veg">Vegetarian</option>
+            <option value="nonveg">Non-Vegetarian</option>
+        </select>
+
         <button type="submit">Get Result</button>
     </form>
 </div>
 
-<!-- POPUP -->
+<!-- RESULT POPUP -->
 <div id="popup" class="modal">
     <div class="modal-content">
         <h3 id="bmi"></h3>
         <p id="category"></p>
-        <ul id="activities"></ul>
+
+        <button onclick="showDiet()">Show Diet Chart</button>
+    </div>
+</div>
+
+<!-- DIET POPUP -->
+<div id="dietPopup" class="modal">
+    <div class="modal-content">
+        <h3>Diet Chart</h3>
+        <table id="dietTable"></table>
     </div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
+let storedData = null;
 
-    document.getElementById("form").addEventListener("submit", function(e){
-        e.preventDefault();
+document.getElementById("form").addEventListener("submit", function(e){
+    e.preventDefault();
 
-        fetch("/calculate", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                age: document.getElementById("age").value,
-                height: document.getElementById("height").value,
-                weight: document.getElementById("weight").value
-            })
+    fetch("/calculate", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            height: document.getElementById("height").value,
+            weight: document.getElementById("weight").value,
+            diet: document.getElementById("diet").value
         })
-        .then(res => res.json())
-        .then(data => {
+    })
+    .then(res => res.json())
+    .then(data => {
 
-            document.getElementById("bmi").innerText = "BMI: " + data.bmi;
-            document.getElementById("category").innerText = "Category: " + data.category;
+        storedData = data;
 
-            let list = document.getElementById("activities");
-            list.innerHTML = "";
-            data.activities.forEach(a => {
-                list.innerHTML += "<li>" + a + "</li>";
-            });
+        document.getElementById("bmi").innerText = "BMI: " + data.bmi;
+        document.getElementById("category").innerText = data.category;
 
-            document.getElementById("popup").style.display = "flex";
-        })
-        .catch(err => {
-            alert("Error connecting to backend");
-            console.log(err);
-        });
-
+        document.getElementById("popup").style.display = "flex";
     });
-
 });
+
+function showDiet(){
+    document.getElementById("popup").style.display = "none";
+
+    let table = document.getElementById("dietTable");
+    table.innerHTML = "<tr><th>Meal</th><th>Food</th></tr>";
+
+    for(let key in storedData.foods){
+        table.innerHTML += `<tr><td>${key}</td><td>${storedData.foods[key]}</td></tr>`;
+    }
+
+    document.getElementById("dietPopup").style.display = "flex";
+}
 </script>
 
 </body>
