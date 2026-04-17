@@ -1,10 +1,95 @@
 body {
     margin: 0;
-    font-family: 'Segoe UI';
-    background: linear-gradient(to right, #dbeafe, #e0f7f4);
+    font-family: "Segoe UI", sans-serif;
+    background: #f4f6f8;
 }
 
-/* AUTH */
+/* SIDEBAR */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 220px;
+    background: #1f2937;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    margin: 15px 0;
+    font-size: 16px;
+    padding: 10px;
+    width: 80%;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.navbar a:hover {
+    background: #374151;
+}
+
+/* MAIN CONTENT */
+.container {
+    margin-left: 240px;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+/* CARD */
+.card {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.08);
+}
+
+/* INPUTS */
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    padding: 12px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+td, th {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+/* AUTH CENTER */
 .auth-container {
     height: 100vh;
     display: flex;
@@ -13,58 +98,10 @@ body {
 }
 
 .auth-card {
+    width: 350px;
     background: white;
     padding: 30px;
     border-radius: 15px;
-    width: 320px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.1);
     text-align: center;
-}
-
-/* MAIN CONTAINER */
-.container {
-    width: 420px;
-    margin: 80px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-}
-
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-}
-
-button {
-    width: 100%;
-    margin-top: 15px;
-    padding: 10px;
-    background: #2563eb;
-    color: white;
-    border: none;
-}
-
-/* NAVBAR */
-.navbar {
-    background: #1f2937;
-    padding: 10px;
-    text-align: center;
-}
-
-.navbar a {
-    color: white;
-    margin: 10px;
-    text-decoration: none;
-}
-
-/* TABLE */
-table {
-    width: 100%;
-    margin-top: 15px;
-    border-collapse: collapse;
-}
-
-td, th {
-    border: 1px solid #ccc;
-    padding: 8px;
 }
