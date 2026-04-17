@@ -7,20 +7,19 @@
 <body>
 
 <div class="sidebar">
-<h2>💪 FitTrack</h2>
-<a href="/">🏠 Home</a>
-<a href="/history">📊 History</a>
-<a href="/logout">🚪 Logout</a>
+<h2>FitTrack</h2>
+<a href="/">Home</a>
+<a href="/history">History</a>
+<a href="/logout">Logout</a>
 </div>
 
 <div class="main">
 <div class="card">
 
-<h2>Your History</h2>
+<h2>History</h2>
 
 <table>
 <tr><th>BMI</th><th>Category</th><th>Calories</th></tr>
-
 {% for row in data %}
 <tr>
 <td>{{ row[0] }}</td>
@@ -28,7 +27,6 @@
 <td>{{ row[2] }}</td>
 </tr>
 {% endfor %}
-
 </table>
 
 </div>
