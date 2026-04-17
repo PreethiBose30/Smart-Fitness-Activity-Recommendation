@@ -12,6 +12,7 @@
 
     <h3>BMI: {{ bmi }}</h3>
     <h4>Category: {{ category }}</h4>
+    <h4>Type: {{ food_type }}</h4>
 
     <canvas id="chart"></canvas>
 
@@ -28,6 +29,10 @@
         </tr>
         {% endfor %}
     </table>
+
+    <a href="/">
+        <button>Home</button>
+    </a>
 </div>
 
 <script>
@@ -36,7 +41,8 @@ new Chart(document.getElementById("chart"), {
     data: {
         labels: {{ labels|tojson }},
         datasets: [{
-            data: {{ data|tojson }}
+            data: {{ data|tojson }},
+            backgroundColor: ["#36a2eb", "#ff6384", "#ffcd56"]
         }]
     }
 });
