@@ -10,11 +10,10 @@ def home():
 def calculate():
     data = request.get_json()
 
-    age = int(data["age"])
     height = float(data["height"])
     weight = float(data["weight"])
+    diet = data["diet"]
 
-    # convert cm to meters if needed
     if height > 3:
         height = height / 100
 
@@ -22,18 +21,29 @@ def calculate():
 
     if bmi < 18.5:
         category = "Underweight"
-        activities = ["Yoga", "Walking"]
     elif bmi < 25:
         category = "Normal"
-        activities = ["Running", "Gym"]
     else:
         category = "Overweight"
-        activities = ["Cardio", "Cycling"]
+
+    # 🍽️ DIET LOGIC
+    if diet == "veg":
+        foods = {
+            "Breakfast": "Oats, Fruits, Milk",
+            "Lunch": "Rice, Dal, Vegetables",
+            "Dinner": "Chapati, Paneer"
+        }
+    else:
+        foods = {
+            "Breakfast": "Eggs, Milk, Bread",
+            "Lunch": "Chicken, Rice",
+            "Dinner": "Fish, Vegetables"
+        }
 
     return jsonify({
         "bmi": bmi,
         "category": category,
-        "activities": activities
+        "foods": foods
     })
 
 if __name__ == "__main__":
