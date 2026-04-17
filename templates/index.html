@@ -6,35 +6,23 @@
 </head>
 <body>
 
-<div class="sidebar">
-<h2>FitTrack</h2>
-<a href="/">Home</a>
-<a href="/history">History</a>
-<a href="/analytics">Analytics</a>
-<a href="/logout">Logout</a>
-</div>
+<div class="container">
+    <h2>Welcome {{ user }}</h2>
 
-<div class="main">
-<div class="card">
+    <form method="POST">
+        <input name="height" placeholder="Height (cm or m)" required>
+        <input name="weight" placeholder="Weight (kg)" required>
 
-<h2>Welcome {{ user }}</h2>
+        <select name="mood">
+            <option value="energetic">Energetic</option>
+            <option value="tired">Tired</option>
+            <option value="stressed">Stressed</option>
+        </select>
 
-<form method="POST">
-<input name="height" placeholder="Height (cm or m)" required>
-<input name="weight" placeholder="Weight (kg)" required>
+        <input name="steps" placeholder="Steps today" required>
 
-<select name="mood">
-<option value="energetic">Energetic</option>
-<option value="tired">Tired</option>
-<option value="stressed">Stressed</option>
-</select>
-
-<input name="steps" placeholder="Steps today" required>
-
-<button type="submit">Calculate</button>
-</form>
-
-</div>
+        <button type="submit">Get Result</button>
+    </form>
 </div>
 
 </body>
