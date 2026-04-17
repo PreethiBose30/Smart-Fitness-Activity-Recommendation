@@ -8,7 +8,7 @@
 <body>
 
 <div class="header">
-    <span>Fitness App</span>
+    Fitness App
 </div>
 
 <div class="main">
@@ -17,44 +17,34 @@
 
     <form id="form">
 
-        <div class="form-group">
-            <label>Age</label>
-            <input id="age" required>
-        </div>
+        Age:
+        <input id="age" required>
 
-        <div class="form-group">
-            <label>Height (cm)</label>
-            <input id="height" required>
-        </div>
+        Height (cm):
+        <input id="height" required>
 
-        <div class="form-group">
-            <label>Weight (kg)</label>
-            <input id="weight" required>
-        </div>
+        Weight:
+        <input id="weight" required>
 
-        <div class="form-group">
-            <label>Goal</label>
-            <select id="goal">
-                <option value="maintain">Maintain</option>
-                <option value="loss">Weight Loss</option>
-                <option value="gain">Weight Gain</option>
-            </select>
-        </div>
+        Goal:
+        <select id="goal">
+            <option value="maintain">Maintain</option>
+            <option value="loss">Weight Loss</option>
+            <option value="gain">Weight Gain</option>
+        </select>
 
-        <div class="form-group">
-            <label>Medical</label>
-            <select id="medical">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-        </div>
+        Medical:
+        <select id="medical">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select>
 
         <button type="submit">Get Result</button>
     </form>
 </div>
 </div>
 
-<!-- RESULT -->
+<!-- RESULT POPUP -->
 <div id="resultModal" class="modal">
     <div class="modal-content">
         <h3 id="bmi"></h3>
@@ -69,7 +59,7 @@
     </div>
 </div>
 
-<!-- DIET -->
+<!-- DIET POPUP -->
 <div id="dietModal" class="modal">
     <div class="modal-content">
         <div class="chart-box">
@@ -80,66 +70,67 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function(){
 
 document.getElementById("form").addEventListener("submit", function(e){
     e.preventDefault();
 
     fetch("/calculate", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            age:age.value,
-            height:height.value,
-            weight:weight.value,
-            goal:goal.value,
-            medical:medical.value
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            age: document.getElementById("age").value,
+            height: document.getElementById("height").value,
+            weight: document.getElementById("weight").value,
+            goal: document.getElementById("goal").value,
+            medical: document.getElementById("medical").value
         })
     })
-    .then(res=>res.json())
-    .then(data=>{
+    .then(res => res.json())
+    .then(data => {
 
-        bmi.innerText = "BMI: "+data.bmi;
-        category.innerText = "Category: "+data.category;
-        calories.innerText = "Calories: "+data.calories;
-        water.innerText = "Water: "+data.water;
-        workout.innerText = "Workout: "+data.workout;
+        document.getElementById("bmi").innerText = "BMI: " + data.bmi;
+        document.getElementById("category").innerText = "Category: " + data.category;
+        document.getElementById("calories").innerText = "Calories: " + data.calories;
+        document.getElementById("water").innerText = "Water: " + data.water;
+        document.getElementById("workout").innerText = "Workout: " + data.workout;
 
-        activities.innerHTML="";
-        data.activities.forEach(a=>{
-            activities.innerHTML += "<li>"+a+"</li>";
+        let list = document.getElementById("activities");
+        list.innerHTML = "";
+        data.activities.forEach(a => {
+            list.innerHTML += "<li>" + a + "</li>";
         });
 
         window.dataStore = data;
 
-        resultModal.style.display="flex";
+        document.getElementById("resultModal").style.display = "flex";
     });
-
 });
 
 });
 
 function showDiet(){
-    resultModal.style.display="none";
+    document.getElementById("resultModal").style.display = "none";
 
     let data = window.dataStore;
 
-    foodTable.innerHTML="<tr><th>Type</th><th>Foods</th></tr>";
+    let table = document.getElementById("foodTable");
+    table.innerHTML = "<tr><th>Type</th><th>Foods</th></tr>";
 
     for(let k in data.foods){
-        foodTable.innerHTML+=`<tr><td>${k}</td><td>${data.foods[k]}</td></tr>`;
+        table.innerHTML += `<tr><td>${k}</td><td>${data.foods[k]}</td></tr>`;
     }
 
-    new Chart(chart,{
-        type:"pie",
-        data:{
-            labels:data.labels,
-            datasets:[{data:data.chart_data}]
+    new Chart(document.getElementById("chart"), {
+        type: "pie",
+        data: {
+            labels: data.labels,
+            datasets: [{ data: data.chart_data }]
         },
-        options:{maintainAspectRatio:false}
+        options: { maintainAspectRatio: false }
     });
 
-    dietModal.style.display="flex";
+    document.getElementById("dietModal").style.display = "flex";
 }
 </script>
 
