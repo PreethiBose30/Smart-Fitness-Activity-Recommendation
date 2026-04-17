@@ -4,46 +4,38 @@
 <title>Home</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>💪 FitTrack</h2>
-    <a href="/">🏠 Home</a>
-    <a href="/history">📊 History</a>
-    <a href="/logout">🚪 Logout</a>
+<h2>💪 FitTrack</h2>
+<a href="/">Home</a>
+<a href="/history">History</a>
+<a href="/logout">Logout</a>
 </div>
 
-<!-- MAIN AREA -->
 <div class="main">
+<div class="card">
 
-    <div class="card">
+<h2>Welcome {{ user }}</h2>
 
-        <h2>Welcome {{ user }}</h2>
+<form method="POST">
+<input name="height" placeholder="Height">
+<input name="weight" placeholder="Weight">
 
-        <form method="POST">
+<select name="medical_condition">
+<option value="no">No Medical</option>
+<option value="yes">Medical</option>
+</select>
 
-            <input name="height" placeholder="Height (cm or m)" required>
+<select name="food_type">
+<option value="veg">Veg</option>
+<option value="nonveg">Non-Veg</option>
+</select>
 
-            <input name="weight" placeholder="Weight (kg)" required>
+<button>Calculate</button>
+</form>
 
-            <select name="medical_condition">
-                <option value="no">No Medical Condition</option>
-                <option value="yes">Medical Condition</option>
-            </select>
-
-            <select name="food_type">
-                <option value="veg">Vegetarian</option>
-                <option value="nonveg">Non-Vegetarian</option>
-            </select>
-
-            <button type="submit">Calculate</button>
-
-        </form>
-
-    </div>
-
+</div>
 </div>
 
 </body>
