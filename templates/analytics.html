@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Analytics</title>
+<title>Advanced Analytics</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -17,10 +17,16 @@
 
 <div class="container">
 
-<h2>Analytics Dashboard</h2>
+<h2>Advanced Analytics Dashboard</h2>
 
 <p><b>Average Steps:</b> {{ avg }}</p>
 <p><b>Insight:</b> {{ insight }}</p>
+
+<p><b>🔥 Activity Score:</b> {{ score }}/100</p>
+<p><b>📅 Best Day:</b> {{ best_day }}</p>
+<p><b>📈 Improvement:</b> {{ improvement }} steps</p>
+
+<br>
 
 <canvas id="chart"></canvas>
 
@@ -32,10 +38,11 @@ new Chart(document.getElementById("chart"), {
     data: {
         labels: {{ dates|tojson }},
         datasets: [{
-            label: "Steps",
+            label: "Daily Steps",
             data: {{ steps|tojson }},
             borderColor: "#2563eb",
-            fill: false
+            fill: false,
+            tension: 0.3
         }]
     }
 });
