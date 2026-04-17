@@ -4,7 +4,7 @@ import sqlite3, datetime
 app = Flask(__name__)
 app.secret_key = "secret"
 
-# ---------- DATABASE ----------
+# ---------- DB ----------
 def init_db():
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
@@ -39,9 +39,9 @@ def smart_recommendation(bmi, mood, goal, steps):
     if mood == "tired":
         activities = ["Light Yoga", "Stretching"]
     elif mood == "stressed":
-        activities = ["Meditation", "Breathing Exercises"]
+        activities = ["Meditation", "Breathing"]
     else:
-        activities = ["HIIT", "Running"]
+        activities = ["Running", "HIIT"]
 
     if steps < 3000:
         notes.append("You are less active today. Try walking more.")
@@ -57,12 +57,12 @@ def smart_recommendation(bmi, mood, goal, steps):
 @app.route("/register", methods=["GET","POST"])
 def register():
     if request.method=="POST":
-        user = request.form["username"]
-        pwd = request.form["password"]
-        goal = request.form["goal"]
+        user=request.form["username"]
+        pwd=request.form["password"]
+        goal=request.form["goal"]
 
-        conn = sqlite3.connect("users.db")
-        c = conn.cursor()
+        conn=sqlite3.connect("users.db")
+        c=conn.cursor()
         c.execute("INSERT INTO users VALUES (NULL,?,?,?)",(user,pwd,goal))
         conn.commit()
         conn.close()
@@ -113,12 +113,10 @@ def index():
             height/=100
 
         bmi=round(weight/(height**2),2)
-        category = "Underweight" if bmi<18.5 else "Normal" if bmi<25 else "Overweight"
+        category="Underweight" if bmi<18.5 else "Normal" if bmi<25 else "Overweight"
         calories=int(weight*30)
 
-        activities,notes = smart_recommendation(
-            bmi, mood, session["goal"], steps
-        )
+        activities,notes=smart_recommendation(bmi,mood,session["goal"],steps)
 
         today=str(datetime.date.today())
 
@@ -129,15 +127,42 @@ def index():
         conn.commit()
         conn.close()
 
-        return render_template("result.html",
+        return redirect(url_for("result",
                                bmi=bmi,
                                category=category,
-                               calories=calories,
-                               activities=activities,
-                               notes=notes,
-                               goal=session["goal"])
+                               calories=calories))
 
     return render_template("index.html", user=session["user"])
+
+# ---------- RESULT ----------
+@app.route("/result")
+def result():
+    bmi=float(request.args.get("bmi"))
+    category=request.args.get("category")
+    calories=request.args.get("calories")
+
+    activities,notes=smart_recommendation(bmi,"energetic",session["goal"],5000)
+
+    return render_template("result.html",
+                           bmi=bmi,
+                           category=category,
+                           calories=calories,
+                           activities=activities,
+                           notes=notes)
+
+# ---------- DIET ----------
+@app.route("/diet")
+def diet():
+    category=request.args.get("category")
+
+    if category=="Underweight":
+        foods={"Proteins":"Milk, Eggs","Carbs":"Rice","Fats":"Nuts"}
+    elif category=="Normal":
+        foods={"Proteins":"Chicken, Dal","Carbs":"Chapati","Fats":"Oil"}
+    else:
+        foods={"Proteins":"Lean meat","Carbs":"Oats","Fats":"Olive oil"}
+
+    return render_template("diet.html",category=category,foods=foods)
 
 # ---------- HISTORY ----------
 @app.route("/history")
@@ -148,7 +173,7 @@ def history():
     data=c.fetchall()
     conn.close()
 
-    return render_template("history.html", data=data)
+    return render_template("history.html",data=data)
 
 # ---------- ANALYTICS ----------
 @app.route("/analytics")
@@ -159,10 +184,10 @@ def analytics():
     steps=[x[0] for x in c.fetchall()]
     conn.close()
 
-    avg = sum(steps)//len(steps) if steps else 0
-    insight = "Great activity!" if avg>5000 else "Try to be more active"
+    avg=sum(steps)//len(steps) if steps else 0
+    insight="Great activity!" if avg>5000 else "Try to be more active"
 
-    return render_template("analytics.html", avg=avg, insight=insight)
+    return render_template("analytics.html",avg=avg,insight=insight)
 
 if __name__=="__main__":
     app.run(debug=True)
