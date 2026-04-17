@@ -224,23 +224,51 @@ def analytics():
     data = c.fetchall()
     conn.close()
 
+    if not data:
+        return render_template("analytics.html",
+                               avg=0,
+                               insight="No data yet",
+                               steps=[],
+                               dates=[],
+                               best_day="N/A",
+                               score=0,
+                               improvement=0)
+
     steps = [row[0] for row in data]
     dates = [row[1] for row in data]
 
-    avg = sum(steps)//len(steps) if steps else 0
+    # ---------- AVERAGE ----------
+    avg = sum(steps) // len(steps)
 
-    if avg > 7000:
-        insight = "🔥 Excellent! You're very active."
-    elif avg > 4000:
-        insight = "👍 Good, but you can improve."
+    # ---------- ACTIVITY SCORE ----------
+    score = min(100, int(avg / 100))   # simple score logic
+
+    # ---------- BEST DAY ----------
+    max_steps = max(steps)
+    best_day = dates[steps.index(max_steps)]
+
+    # ---------- IMPROVEMENT ----------
+    if len(steps) > 1:
+        improvement = steps[-1] - steps[0]
     else:
-        insight = "⚠️ Try to be more active daily."
+        improvement = 0
+
+    # ---------- INSIGHTS ----------
+    if avg > 8000:
+        insight = "🔥 Excellent consistency!"
+    elif avg > 5000:
+        insight = "👍 Good progress, keep pushing!"
+    else:
+        insight = "⚠️ You need to be more active."
 
     return render_template("analytics.html",
                            avg=avg,
                            insight=insight,
                            steps=steps,
-                           dates=dates)
+                           dates=dates,
+                           best_day=best_day,
+                           score=score,
+                           improvement=improvement)
     
 # ---------- RUN ----------
 if __name__=="__main__":
