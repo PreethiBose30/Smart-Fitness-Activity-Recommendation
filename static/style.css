@@ -1,79 +1,115 @@
 body {
-    margin:0;
-    font-family:Segoe UI;
-    background:#f5f7fa;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f1f5f9;
 }
 
 /* SIDEBAR */
-.sidebar{
-    width:220px;
-    height:100vh;
-    background:#111827;
-    color:white;
-    position:fixed;
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background: #0f172a;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 20px;
 }
 
-.sidebar h2{
-    text-align:center;
-    padding:20px;
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-.sidebar a{
-    display:block;
-    padding:12px 20px;
-    color:#9ca3af;
-    text-decoration:none;
+.sidebar a {
+    display: block;
+    padding: 14px 20px;
+    color: #cbd5f5;
+    text-decoration: none;
+    font-size: 16px;
 }
 
-.sidebar a:hover{
-    background:#1f2937;
-    color:white;
+.sidebar a:hover {
+    background: #1e293b;
+    color: white;
 }
 
-/* MAIN */
-.main{
-    margin-left:220px;
-    padding:40px;
+/* MAIN AREA */
+.main {
+    margin-left: 220px;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;   /* horizontal center */
+    align-items: center;       /* vertical center */
 }
 
 /* CARD */
-.card{
-    max-width:500px;
-    margin:auto;
-    background:white;
-    padding:30px;
-    border-radius:12px;
+.card {
+    width: 500px;
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* HEADINGS */
+.card h2 {
+    margin-bottom: 10px;
+}
+
+/* TEXT BLOCK */
+.info {
+    line-height: 1.8;
+}
+
+/* LIST */
+ul {
+    padding-left: 20px;
+}
+
+/* BUTTON */
+button {
+    padding: 12px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 150px;
 }
 
 /* FORM */
-form{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-input,select{
-    padding:10px;
+input, select {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
 }
 
-button{
-    padding:10px;
-    background:#4f46e5;
-    color:white;
-    border:none;
+/* TABLE (FIXED ALIGNMENT) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
 }
 
-/* AUTH */
-.auth-container{
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
 }
 
-.auth-card{
-    background:white;
-    padding:30px;
-    border-radius:12px;
-    width:300px;
+/* LEFT COLUMN STRONG ALIGNMENT */
+td:first-child {
+    font-weight: bold;
+    width: 30%;
 }
