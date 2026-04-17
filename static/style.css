@@ -1,139 +1,41 @@
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    display: flex;
-    background: #f5f7fa;
-}
-
-/* SIDEBAR */
-.sidebar {
-    width: 240px;
+.auth-container {
     height: 100vh;
-    background: #1f2937;
-    color: white;
-    position: fixed;
     display: flex;
-    flex-direction: column;
-}
-
-.sidebar h2 {
-    text-align: center;
-    padding: 20px 0;
-    border-bottom: 1px solid #374151;
-    margin: 0;
-}
-
-.sidebar a {
-    padding: 14px 20px;
-    text-decoration: none;
-    color: #d1d5db;
-    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-    transition: 0.2s;
 }
 
-.sidebar a:hover {
-    background: #374151;
-    color: white;
-}
-
-.sidebar a.active {
-    background: #2563eb;
-    color: white;
-}
-
-/* MAIN */
-.main {
-    margin-left: 240px;
-    padding: 40px;
-    width: 100%;
-}
-
-/* CARD CONTAINER */
-.card {
-    max-width: 500px;
-    margin: auto;
-    background: white;
+.auth-card {
+    width: 350px;
     padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-}
-
-/* HEADINGS */
-h2 {
-    margin-bottom: 20px;
+    border-radius: 20px;
+    background: white;  /* FIXED (was transparent) */
+    color: #111;        /* dark text */
     text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
-/* FORM */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-input, select {
+.auth-card input {
+    width: 100%;
     padding: 12px;
+    margin-top: 10px;
     border-radius: 10px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
+    border: 1px solid #ccc;
 }
 
-/* BUTTON */
-button {
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    background: #2563eb;
-    color: white;
-    font-size: 15px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-button:hover {
-    background: #1d4ed8;
-}
-
-/* RESULT BOX */
-.result-box {
-    background: #f9fafb;
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 15px;
-}
-
-/* TABLE */
-table {
+.auth-card button {
     width: 100%;
     margin-top: 15px;
-    border-collapse: collapse;
-}
-
-th {
-    background: #2563eb;
-    color: white;
-    padding: 10px;
-}
-
-td {
-    padding: 10px;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-/* PROGRESS BAR */
-.progress {
-    background: #e5e7eb;
+    padding: 12px;
     border-radius: 10px;
-    overflow: hidden;
-    margin: 15px 0;
+    border: none;
+    background: #4f46e5;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-.progress-bar {
-    height: 20px;
-    background: #22c55e;
-    text-align: center;
-    color: white;
-    font-size: 12px;
+.auth-card a {
+    color: #4f46e5;   /* FIX: visible link */
+    text-decoration: none;
 }
