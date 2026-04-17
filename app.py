@@ -153,16 +153,40 @@ def result():
 # ---------- DIET ----------
 @app.route("/diet")
 def diet():
-    category=request.args.get("category")
+    category = request.args.get("category")
 
-    if category=="Underweight":
-        foods={"Proteins":"Milk, Eggs","Carbs":"Rice","Fats":"Nuts"}
-    elif category=="Normal":
-        foods={"Proteins":"Chicken, Dal","Carbs":"Chapati","Fats":"Oil"}
+    if category == "Underweight":
+        labels = ["Proteins", "Carbs", "Fats"]
+        data = [40, 40, 20]
+        foods = {
+            "Proteins": "Milk, Eggs, Paneer",
+            "Carbs": "Rice, Bread",
+            "Fats": "Nuts, Butter"
+        }
+
+    elif category == "Normal":
+        labels = ["Proteins", "Carbs", "Fats"]
+        data = [30, 50, 20]
+        foods = {
+            "Proteins": "Chicken, Dal",
+            "Carbs": "Chapati, Rice",
+            "Fats": "Oil, Nuts"
+        }
+
     else:
-        foods={"Proteins":"Lean meat","Carbs":"Oats","Fats":"Olive oil"}
+        labels = ["Proteins", "Carbs", "Fats"]
+        data = [35, 40, 25]
+        foods = {
+            "Proteins": "Lean meat, Lentils",
+            "Carbs": "Oats, Vegetables",
+            "Fats": "Olive oil"
+        }
 
-    return render_template("diet.html",category=category,foods=foods)
+    return render_template("diet.html",
+                           category=category,
+                           labels=labels,
+                           data=data,
+                           foods=foods)
 
 # ---------- HISTORY ----------
 @app.route("/history")
