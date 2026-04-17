@@ -3,7 +3,9 @@
 <head>
 <title>Analytics</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
 <div class="navbar">
@@ -14,12 +16,30 @@
 </div>
 
 <div class="container">
-<h2>Analytics</h2>
 
-<p>Average Steps: {{ avg }}</p>
-<p>{{ insight }}</p>
+<h2>Analytics Dashboard</h2>
+
+<p><b>Average Steps:</b> {{ avg }}</p>
+<p><b>Insight:</b> {{ insight }}</p>
+
+<canvas id="chart"></canvas>
 
 </div>
+
+<script>
+new Chart(document.getElementById("chart"), {
+    type: "line",
+    data: {
+        labels: {{ dates|tojson }},
+        datasets: [{
+            label: "Steps",
+            data: {{ steps|tojson }},
+            borderColor: "#2563eb",
+            fill: false
+        }]
+    }
+});
+</script>
 
 </body>
 </html>
