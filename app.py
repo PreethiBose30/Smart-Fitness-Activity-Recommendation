@@ -4,7 +4,6 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = "secret123"
 
-
 # ---------- DATABASE ----------
 def init_db():
     conn = sqlite3.connect("users.db")
@@ -20,7 +19,8 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
         bmi REAL,
-        category TEXT
+        category TEXT,
+        calories INTEGER
     )''')
 
     conn.commit()
@@ -28,15 +28,25 @@ def init_db():
 
 init_db()
 
-
 # ---------- LOGIC ----------
 def get_recommendations(bmi, medical):
+    activities = []
+    notes = []
+
     if bmi < 18.5:
-        return ["Walking", "Yoga"], ["Eat more"], "Underweight"
+        activities = ["Walking", "Yoga", "Light strength training"]
+        category = "Underweight"
     elif bmi < 25:
-        return ["Jogging", "Gym"], [], "Normal"
+        activities = ["Jogging", "Cycling", "Strength training"]
+        category = "Normal"
     else:
-        return ["Cardio", "Walking"], ["Avoid junk"], "Overweight"
+        activities = ["Cardio", "Swimming", "Brisk walking"]
+        category = "Overweight"
+
+    if medical == "yes":
+        notes.append("Avoid high intensity workouts")
+
+    return activities, notes, category
 
 
 def calculate_calories(weight):
@@ -44,14 +54,13 @@ def calculate_calories(weight):
 
 
 def get_diet_plan(category, food_type):
-    protein = "Paneer, Dal" if food_type == "veg" else "Chicken, Eggs"
+    protein = "Paneer, Dal, Soy" if food_type == "veg" else "Chicken, Eggs, Fish"
 
     return ["Proteins", "Carbs", "Fats"], [30, 50, 20], {
         "Proteins": protein,
         "Carbs": "Rice, Chapati",
         "Fats": "Nuts, Oil"
     }
-
 
 # ---------- AUTH ----------
 @app.route("/register", methods=["GET", "POST"])
@@ -62,7 +71,7 @@ def register():
 
         conn = sqlite3.connect("users.db")
         c = conn.cursor()
-        c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (user, pwd))
+        c.execute("INSERT INTO users VALUES (NULL, ?, ?)", (user, pwd))
         conn.commit()
         conn.close()
 
@@ -97,7 +106,6 @@ def logout():
     session.pop("user", None)
     return redirect("/login")
 
-
 # ---------- MAIN ----------
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -118,30 +126,39 @@ def index():
 
         activities, notes, category = get_recommendations(bmi, medical)
 
-        # SAVE HISTORY
         conn = sqlite3.connect("users.db")
         c = conn.cursor()
-        c.execute("INSERT INTO history (username, bmi, category) VALUES (?, ?, ?)",
-                  (session["user"], bmi, category))
+        c.execute(
+            "INSERT INTO history (username, bmi, category, calories) VALUES (?, ?, ?, ?)",
+            (session["user"], bmi, category, calories)
+        )
         conn.commit()
         conn.close()
 
         return redirect(url_for("result",
                                 bmi=bmi,
                                 category=category,
+                                medical=medical,
                                 food_type=food_type,
                                 calories=calories))
 
-    return render_template("index.html")
+    return render_template("index.html", user=session["user"])
 
 
 @app.route("/result")
 def result():
+    bmi = request.args.get("bmi")
+    medical = request.args.get("medical")
+
+    activities, notes, _ = get_recommendations(float(bmi), medical)
+
     return render_template("result.html",
-                           bmi=request.args.get("bmi"),
+                           bmi=bmi,
                            category=request.args.get("category"),
                            food_type=request.args.get("food_type"),
-                           calories=request.args.get("calories"))
+                           calories=request.args.get("calories"),
+                           activities=activities,
+                           notes=notes)
 
 
 @app.route("/diet")
@@ -152,9 +169,12 @@ def diet():
     )
 
     return render_template("diet.html",
+                           bmi=request.args.get("bmi"),
+                           category=request.args.get("category"),
                            labels=labels,
                            data=data,
-                           foods=foods)
+                           foods=foods,
+                           food_type=request.args.get("food_type"))
 
 
 @app.route("/history")
@@ -164,12 +184,12 @@ def history():
 
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
-    c.execute("SELECT bmi, category FROM history WHERE username=?", (session["user"],))
+    c.execute("SELECT bmi, category, calories FROM history WHERE username=?", (session["user"],))
     data = c.fetchall()
     conn.close()
 
     return render_template("history.html", data=data)
-
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
