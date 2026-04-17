@@ -1,50 +1,29 @@
 body {
     font-family: Arial;
-    background: linear-gradient(135deg, #e0f7fa, #e8f5e9);
+    background: #e8f5e9;
 }
 
-/* HEADER */
-.header {
-    background: #2c3e50;
-    color: white;
-    padding: 15px;
-}
-
-/* CENTER */
-.main {
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
-}
-
-/* CARD */
 .container {
+    width: 300px;
+    margin: auto;
+    margin-top: 100px;
     background: white;
     padding: 20px;
-    width: 350px;
     border-radius: 10px;
 }
 
-h2 {
-    text-align: center;
-}
-
-input, select {
+input, button {
     width: 100%;
-    margin-top: 5px;
-    margin-bottom: 10px;
+    margin: 8px 0;
     padding: 8px;
 }
 
 button {
-    width: 100%;
-    padding: 10px;
     background: green;
     color: white;
     border: none;
 }
 
-/* MODAL */
 .modal {
     display: none;
     position: fixed;
@@ -58,21 +37,5 @@ button {
 .modal-content {
     background: white;
     padding: 20px;
-    width: 350px;
-}
-
-/* CHART */
-.chart-box {
-    width: 250px;
-    height: 250px;
-    margin: auto;
-}
-
-table {
-    width: 100%;
-}
-
-td, th {
-    border: 1px solid #ccc;
-    padding: 5px;
+    border-radius: 10px;
 }
