@@ -4,7 +4,7 @@ import sqlite3, datetime
 app = Flask(__name__)
 app.secret_key = "secret"
 
-# ---------- DATABASE ----------
+# ---------- DB ----------
 def init_db():
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
@@ -31,7 +31,7 @@ def init_db():
 
 init_db()
 
-# ---------- SMART ENGINE ----------
+# ---------- SMART RECOMMENDATION ----------
 def smart_recommendation(bmi, mood, goal, steps):
     activities = []
     notes = []
@@ -44,7 +44,7 @@ def smart_recommendation(bmi, mood, goal, steps):
         activities = ["Running", "HIIT"]
 
     if steps < 3000:
-        notes.append("You are less active today. Try walking more.")
+        notes.append("Low activity today. Walk more.")
 
     if goal == "weight_loss":
         activities.append("Cardio")
@@ -85,7 +85,6 @@ def login():
 
         if result:
             session["user"]=user
-            session["goal"]=result[3]
             return redirect("/")
         else:
             return "Invalid login"
@@ -121,9 +120,17 @@ def index():
         else:
             category="Overweight"
 
+        # SMART GOAL OVERRIDE
+        if category == "Underweight":
+            goal = "muscle"
+        elif category == "Normal":
+            goal = "fitness"
+        else:
+            goal = "weight_loss"
+
         calories=int(weight*30)
 
-        activities,notes=smart_recommendation(bmi,mood,session["goal"],steps)
+        activities,notes=smart_recommendation(bmi,mood,goal,steps)
 
         today=str(datetime.date.today())
 
@@ -137,7 +144,8 @@ def index():
         return redirect(url_for("result",
                                bmi=bmi,
                                category=category,
-                               calories=calories))
+                               calories=calories,
+                               goal=goal))
 
     return render_template("index.html", user=session["user"])
 
@@ -147,24 +155,33 @@ def result():
     bmi=float(request.args.get("bmi"))
     category=request.args.get("category")
     calories=request.args.get("calories")
+    goal=request.args.get("goal")
 
-    activities,notes=smart_recommendation(bmi,"energetic",session["goal"],5000)
+    activities,notes=smart_recommendation(bmi,"energetic",goal,5000)
 
     return render_template("result.html",
                            bmi=bmi,
                            category=category,
                            calories=calories,
+                           goal=goal,
                            activities=activities,
                            notes=notes)
 
-# ---------- SMART DIET ----------
+# ---------- DIET ----------
 @app.route("/diet")
 def diet():
     category = request.args.get("category")
     bmi = float(request.args.get("bmi", 0))
-    goal = session.get("goal", "fitness")
 
-    # CALORIES BASED ON GOAL
+    # SMART GOAL
+    if category == "Underweight":
+        goal = "muscle"
+    elif category == "Normal":
+        goal = "fitness"
+    else:
+        goal = "weight_loss"
+
+    # CALORIES
     if goal == "weight_loss":
         calories = 1800
     elif goal == "muscle":
@@ -177,10 +194,10 @@ def diet():
         labels = ["Proteins", "Carbs", "Fats"]
         data = [25, 55, 20]
         meals = {
-            "Breakfast": "Milk, Banana, Peanut Butter",
-            "Lunch": "Rice, Dal, Paneer",
-            "Dinner": "Chapati, Vegetables",
-            "Snacks": "Nuts, Smoothie"
+            "Breakfast": "Milk, Banana",
+            "Lunch": "Rice, Dal",
+            "Dinner": "Chapati, Veg",
+            "Snacks": "Nuts"
         }
 
     elif category == "Normal":
@@ -189,18 +206,18 @@ def diet():
         meals = {
             "Breakfast": "Eggs / Oats",
             "Lunch": "Rice, Chicken/Dal",
-            "Dinner": "Chapati, Veg",
-            "Snacks": "Fruits, Nuts"
+            "Dinner": "Chapati",
+            "Snacks": "Fruits"
         }
 
     else:
         labels = ["Proteins", "Carbs", "Fats"]
         data = [35, 40, 25]
         meals = {
-            "Breakfast": "Oats, Fruits",
-            "Lunch": "Grilled chicken / Dal",
-            "Dinner": "Salad, Soup",
-            "Snacks": "Green tea, Nuts"
+            "Breakfast": "Oats",
+            "Lunch": "Grilled chicken",
+            "Dinner": "Salad",
+            "Snacks": "Green tea"
         }
 
     return render_template("diet.html",
@@ -212,54 +229,44 @@ def diet():
                            meals=meals,
                            goal=goal)
 
+# ---------- HISTORY ----------
+@app.route("/history")
+def history():
+    if "user" not in session:
+        return redirect("/login")
+
+    conn=sqlite3.connect("users.db")
+    c=conn.cursor()
+    c.execute("SELECT bmi,category,calories,date,steps FROM history WHERE username=? ORDER BY date DESC",(session["user"],))
+    data=c.fetchall()
+    conn.close()
+
+    return render_template("history.html",data=data)
+
+# ---------- ANALYTICS ----------
 @app.route("/analytics")
 def analytics():
     if "user" not in session:
         return redirect("/login")
 
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
-
-    c.execute("SELECT steps, date FROM history WHERE username=?", (session["user"],))
-    data = c.fetchall()
+    conn=sqlite3.connect("users.db")
+    c=conn.cursor()
+    c.execute("SELECT steps,date FROM history WHERE username=?",(session["user"],))
+    data=c.fetchall()
     conn.close()
 
     if not data:
-        return render_template("analytics.html",
-                               avg=0,
-                               insight="No data yet",
-                               steps=[],
-                               dates=[],
-                               best_day="N/A",
-                               score=0,
-                               improvement=0)
+        return render_template("analytics.html",avg=0,insight="No data",steps=[],dates=[],best_day="N/A",score=0,improvement=0)
 
-    steps = [row[0] for row in data]
-    dates = [row[1] for row in data]
+    steps=[x[0] for x in data]
+    dates=[x[1] for x in data]
 
-    # ---------- AVERAGE ----------
-    avg = sum(steps) // len(steps)
+    avg=sum(steps)//len(steps)
+    score=min(100,int(avg/100))
+    best_day=dates[steps.index(max(steps))]
+    improvement=steps[-1]-steps[0] if len(steps)>1 else 0
 
-    # ---------- ACTIVITY SCORE ----------
-    score = min(100, int(avg / 100))   # simple score logic
-
-    # ---------- BEST DAY ----------
-    max_steps = max(steps)
-    best_day = dates[steps.index(max_steps)]
-
-    # ---------- IMPROVEMENT ----------
-    if len(steps) > 1:
-        improvement = steps[-1] - steps[0]
-    else:
-        improvement = 0
-
-    # ---------- INSIGHTS ----------
-    if avg > 8000:
-        insight = "🔥 Excellent consistency!"
-    elif avg > 5000:
-        insight = "👍 Good progress, keep pushing!"
-    else:
-        insight = "⚠️ You need to be more active."
+    insight="🔥 Excellent!" if avg>8000 else "👍 Good" if avg>5000 else "⚠️ Improve activity"
 
     return render_template("analytics.html",
                            avg=avg,
@@ -269,7 +276,6 @@ def analytics():
                            best_day=best_day,
                            score=score,
                            improvement=improvement)
-    
-# ---------- RUN ----------
+
 if __name__=="__main__":
     app.run(debug=True)
