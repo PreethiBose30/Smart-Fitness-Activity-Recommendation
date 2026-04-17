@@ -4,19 +4,6 @@ body {
     background: linear-gradient(to right, #dbeafe, #e0f7f4);
 }
 
-.navbar {
-    background: #2c3e50;
-    padding: 15px;
-    text-align: center;
-}
-
-.navbar a {
-    color: white;
-    margin: 15px;
-    text-decoration: none;
-    font-size: 18px;
-}
-
 .container {
     width: 450px;
     margin: 60px auto;
@@ -46,13 +33,7 @@ button {
     color: white;
     border-radius: 8px;
     font-size: 16px;
-}
-
-.result {
-    margin-top: 20px;
-    padding: 15px;
-    background: #f0f9ff;
-    border-radius: 10px;
+    margin-top: 10px;
 }
 
 table {
