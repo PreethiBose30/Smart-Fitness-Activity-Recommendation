@@ -1,25 +1,42 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
+import sqlite3
 
 app = Flask(__name__)
+app.secret_key = "secret123"
 
+
+# ---------- DATABASE ----------
+def init_db():
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+
+    c.execute('''CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        password TEXT
+    )''')
+
+    c.execute('''CREATE TABLE IF NOT EXISTS history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        bmi REAL,
+        category TEXT
+    )''')
+
+    conn.commit()
+    conn.close()
+
+init_db()
+
+
+# ---------- LOGIC ----------
 def get_recommendations(bmi, medical):
-    activities = []
-    notes = []
-
     if bmi < 18.5:
-        activities = ["Walking", "Yoga", "Light strength training"]
-        category = "Underweight"
-    elif 18.5 <= bmi < 25:
-        activities = ["Jogging", "Cycling", "Strength training"]
-        category = "Normal"
+        return ["Walking", "Yoga"], ["Eat more"], "Underweight"
+    elif bmi < 25:
+        return ["Jogging", "Gym"], [], "Normal"
     else:
-        activities = ["Cardio", "Swimming", "Brisk walking"]
-        category = "Overweight"
-
-    if medical == "yes":
-        notes.append("Avoid high intensity workouts")
-
-    return activities, notes, category
+        return ["Cardio", "Walking"], ["Avoid junk"], "Overweight"
 
 
 def calculate_calories(weight):
@@ -27,98 +44,131 @@ def calculate_calories(weight):
 
 
 def get_diet_plan(category, food_type):
+    protein = "Paneer, Dal" if food_type == "veg" else "Chicken, Eggs"
 
-    if food_type == "veg":
-        protein = "Paneer, Dal, Soy"
-    else:
-        protein = "Chicken, Eggs, Fish"
-
-    if category == "Underweight":
-        return ["Proteins", "Carbs", "Fats"], [40, 40, 20], {
-            "Proteins": protein,
-            "Carbs": "Rice, Bread, Fruits",
-            "Fats": "Nuts, Butter"
-        }
-
-    elif category == "Normal":
-        return ["Proteins", "Carbs", "Fats"], [30, 50, 20], {
-            "Proteins": protein,
-            "Carbs": "Rice, Chapati",
-            "Fats": "Oil, Nuts"
-        }
-
-    else:
-        return ["Proteins", "Carbs", "Fats"], [35, 40, 25], {
-            "Proteins": protein,
-            "Carbs": "Oats, Vegetables",
-            "Fats": "Olive oil"
-        }
+    return ["Proteins", "Carbs", "Fats"], [30, 50, 20], {
+        "Proteins": protein,
+        "Carbs": "Rice, Chapati",
+        "Fats": "Nuts, Oil"
+    }
 
 
+# ---------- AUTH ----------
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        user = request.form["username"]
+        pwd = request.form["password"]
+
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (user, pwd))
+        conn.commit()
+        conn.close()
+
+        return redirect("/login")
+
+    return render_template("register.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        user = request.form["username"]
+        pwd = request.form["password"]
+
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, pwd))
+        result = c.fetchone()
+        conn.close()
+
+        if result:
+            session["user"] = user
+            return redirect("/")
+        else:
+            return "Invalid login"
+
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect("/login")
+
+
+# ---------- MAIN ----------
 @app.route("/", methods=["GET", "POST"])
 def index():
+    if "user" not in session:
+        return redirect("/login")
+
     if request.method == "POST":
-        try:
-            age = request.form["age"]
-            height = float(request.form["height"])
-            weight = float(request.form["weight"])
-            medical = request.form["medical_condition"]
-            food_type = request.form["food_type"]
+        height = float(request.form["height"])
+        weight = float(request.form["weight"])
+        medical = request.form["medical_condition"]
+        food_type = request.form["food_type"]
 
-            if height > 3:
-                height = height / 100
+        if height > 3:
+            height /= 100
 
-            bmi = round(weight / (height ** 2), 2)
-            calories = calculate_calories(weight)
+        bmi = round(weight / (height ** 2), 2)
+        calories = calculate_calories(weight)
 
-            activities, notes, category = get_recommendations(bmi, medical)
+        activities, notes, category = get_recommendations(bmi, medical)
 
-            return redirect(url_for("result",
-                                    bmi=bmi,
-                                    category=category,
-                                    medical=medical,
-                                    food_type=food_type,
-                                    calories=calories))
-        except:
-            return "Invalid input! Please enter correct values."
+        # SAVE HISTORY
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute("INSERT INTO history (username, bmi, category) VALUES (?, ?, ?)",
+                  (session["user"], bmi, category))
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for("result",
+                                bmi=bmi,
+                                category=category,
+                                food_type=food_type,
+                                calories=calories))
 
     return render_template("index.html")
 
 
 @app.route("/result")
 def result():
-    bmi = float(request.args.get("bmi"))
-    category = request.args.get("category")
-    medical = request.args.get("medical")
-    food_type = request.args.get("food_type")
-    calories = request.args.get("calories")
-
-    activities, notes, category = get_recommendations(bmi, medical)
-
     return render_template("result.html",
-                           bmi=bmi,
-                           category=category,
-                           activities=activities,
-                           notes=notes,
-                           food_type=food_type,
-                           calories=calories)
+                           bmi=request.args.get("bmi"),
+                           category=request.args.get("category"),
+                           food_type=request.args.get("food_type"),
+                           calories=request.args.get("calories"))
 
 
 @app.route("/diet")
 def diet():
-    bmi = request.args.get("bmi")
-    category = request.args.get("category")
-    food_type = request.args.get("food_type")
-
-    labels, data, foods = get_diet_plan(category, food_type)
+    labels, data, foods = get_diet_plan(
+        request.args.get("category"),
+        request.args.get("food_type")
+    )
 
     return render_template("diet.html",
-                           bmi=bmi,
-                           category=category,
                            labels=labels,
                            data=data,
-                           foods=foods,
-                           food_type=food_type)
+                           foods=foods)
+
+
+@app.route("/history")
+def history():
+    if "user" not in session:
+        return redirect("/login")
+
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+    c.execute("SELECT bmi, category FROM history WHERE username=?", (session["user"],))
+    data = c.fetchall()
+    conn.close()
+
+    return render_template("history.html", data=data)
 
 
 if __name__ == "__main__":
