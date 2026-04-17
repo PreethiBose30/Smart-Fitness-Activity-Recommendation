@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Diet Plan</title>
+<title>Smart Diet Plan</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -16,16 +16,23 @@
 </div>
 
 <div class="container">
-<h2>Diet Plan ({{ category }})</h2>
+
+<h2>Smart Diet Plan</h2>
+
+<p><b>BMI:</b> {{ bmi }}</p>
+<p><b>Category:</b> {{ category }}</p>
+<p><b>Goal:</b> {{ goal }}</p>
+<p><b>Daily Calories:</b> {{ calories }} kcal</p>
 
 <!-- CHART -->
-<canvas id="chart" style="margin-bottom:20px;"></canvas>
+<canvas id="chart" style="margin:20px 0;"></canvas>
 
-<!-- TABLE -->
+<h3>Daily Meal Plan</h3>
+
 <table>
-<tr><th>Category</th><th>Foods</th></tr>
+<tr><th>Meal</th><th>Suggestion</th></tr>
 
-{% for key,value in foods.items() %}
+{% for key,value in meals.items() %}
 <tr>
 <td>{{ key }}</td>
 <td>{{ value }}</td>
@@ -38,12 +45,12 @@
 
 <script>
 new Chart(document.getElementById("chart"), {
-    type: "pie",
+    type: "doughnut",
     data: {
         labels: {{ labels|tojson }},
         datasets: [{
             data: {{ data|tojson }},
-            backgroundColor: ["#4CAF50", "#2196F3", "#FF9800"]
+            backgroundColor: ["#22c55e","#3b82f6","#f59e0b"]
         }]
     }
 });
