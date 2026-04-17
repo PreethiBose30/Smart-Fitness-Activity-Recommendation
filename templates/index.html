@@ -7,9 +7,10 @@
 <body>
 
 <div class="sidebar">
-<h2>💪 FitTrack</h2>
+<h2>FitTrack</h2>
 <a href="/">Home</a>
 <a href="/history">History</a>
+<a href="/analytics">Analytics</a>
 <a href="/logout">Logout</a>
 </div>
 
@@ -19,20 +20,18 @@
 <h2>Welcome {{ user }}</h2>
 
 <form method="POST">
-<input name="height" placeholder="Height">
-<input name="weight" placeholder="Weight">
+<input name="height" placeholder="Height (cm or m)" required>
+<input name="weight" placeholder="Weight (kg)" required>
 
-<select name="medical_condition">
-<option value="no">No Medical</option>
-<option value="yes">Medical</option>
+<select name="mood">
+<option value="energetic">Energetic</option>
+<option value="tired">Tired</option>
+<option value="stressed">Stressed</option>
 </select>
 
-<select name="food_type">
-<option value="veg">Veg</option>
-<option value="nonveg">Non-Veg</option>
-</select>
+<input name="steps" placeholder="Steps today" required>
 
-<button>Calculate</button>
+<button type="submit">Calculate</button>
 </form>
 
 </div>
