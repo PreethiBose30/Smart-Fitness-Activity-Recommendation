@@ -9,11 +9,18 @@
 <div class="auth-container">
 <div class="auth-card">
 
-<h2>Register</h2>
+<h2>Create Account</h2>
 
 <form method="POST">
-<input name="username">
-<input name="password" type="password">
+<input name="username" placeholder="Username" required>
+<input name="password" type="password" placeholder="Password" required>
+
+<select name="goal">
+<option value="weight_loss">Weight Loss</option>
+<option value="muscle">Muscle Gain</option>
+<option value="fitness">General Fitness</option>
+</select>
+
 <button>Register</button>
 </form>
 
