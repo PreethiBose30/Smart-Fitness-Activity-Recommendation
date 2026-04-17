@@ -6,38 +6,29 @@
 </head>
 <body>
 
-<div class="sidebar">
-    <h2>FitTrack</h2>
-    <a href="/">Home</a>
-    <a href="/history">History</a>
-    <a href="/logout">Logout</a>
+<div class="navbar">
+<a href="/">Home</a>
+<a href="/history">History</a>
+<a href="/analytics">Analytics</a>
+<a href="/logout">Logout</a>
 </div>
 
-<div class="main">
-
-<div class="card">
-
+<div class="container">
 <h2>Result</h2>
 
-<div class="info">
-<p><b>BMI:</b> {{ bmi }}</p>
-<p><b>Category:</b> {{ category }}</p>
-<p><b>Calories:</b> {{ calories }}</p>
-</div>
+<p>BMI: {{ bmi }}</p>
+<p>Category: {{ category }}</p>
+<p>Calories: {{ calories }}</p>
 
-<h3>Recommended Activities</h3>
 <ul>
 {% for a in activities %}
 <li>{{ a }}</li>
 {% endfor %}
 </ul>
 
-<a href="/diet?bmi={{ bmi }}&category={{ category }}&food_type={{ food_type }}">
-<button>View Diet</button>
+<a href="/diet?category={{ category }}">
+<button>Diet Plan</button>
 </a>
-
-</div>
-
 </div>
 
 </body>
