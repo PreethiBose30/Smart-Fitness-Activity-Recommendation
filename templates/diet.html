@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Smart Diet Plan</title>
+<title>Diet</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
 
 <div class="navbar">
@@ -16,43 +15,32 @@
 </div>
 
 <div class="container">
-
 <h2>Smart Diet Plan</h2>
 
-<p><b>BMI:</b> {{ bmi }}</p>
-<p><b>Category:</b> {{ category }}</p>
-<p><b>Goal:</b> {{ goal }}</p>
-<p><b>Daily Calories:</b> {{ calories }} kcal</p>
+<p>BMI: {{ bmi }}</p>
+<p>Goal: {{ goal }}</p>
+<p>Calories: {{ calories }}</p>
 
-<!-- CHART -->
-<canvas id="chart" style="margin:20px 0;"></canvas>
-
-<h3>Daily Meal Plan</h3>
+<canvas id="chart"></canvas>
 
 <table>
-<tr><th>Meal</th><th>Suggestion</th></tr>
-
-{% for key,value in meals.items() %}
-<tr>
-<td>{{ key }}</td>
-<td>{{ value }}</td>
-</tr>
+{% for k,v in meals.items() %}
+<tr><td>{{ k }}</td><td>{{ v }}</td></tr>
 {% endfor %}
-
 </table>
 
 </div>
 
 <script>
 new Chart(document.getElementById("chart"), {
-    type: "doughnut",
-    data: {
-        labels: {{ labels|tojson }},
-        datasets: [{
-            data: {{ data|tojson }},
-            backgroundColor: ["#22c55e","#3b82f6","#f59e0b"]
-        }]
-    }
+type: "doughnut",
+data: {
+labels: {{ labels|tojson }},
+datasets: [{
+data: {{ data|tojson }},
+backgroundColor: ["#22c55e","#3b82f6","#f59e0b"]
+}]
+}
 });
 </script>
 
