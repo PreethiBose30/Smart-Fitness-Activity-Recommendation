@@ -4,7 +4,7 @@ import sqlite3, datetime
 app = Flask(__name__)
 app.secret_key = "secret"
 
-# ---------- DB ----------
+# ---------- DATABASE ----------
 def init_db():
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
@@ -113,7 +113,14 @@ def index():
             height/=100
 
         bmi=round(weight/(height**2),2)
-        category="Underweight" if bmi<18.5 else "Normal" if bmi<25 else "Overweight"
+
+        if bmi < 18.5:
+            category="Underweight"
+        elif bmi < 25:
+            category="Normal"
+        else:
+            category="Overweight"
+
         calories=int(weight*30)
 
         activities,notes=smart_recommendation(bmi,mood,session["goal"],steps)
@@ -150,68 +157,61 @@ def result():
                            activities=activities,
                            notes=notes)
 
-# ---------- DIET ----------
+# ---------- SMART DIET ----------
 @app.route("/diet")
 def diet():
     category = request.args.get("category")
+    bmi = float(request.args.get("bmi", 0))
+    goal = session.get("goal", "fitness")
 
+    # CALORIES BASED ON GOAL
+    if goal == "weight_loss":
+        calories = 1800
+    elif goal == "muscle":
+        calories = 2500
+    else:
+        calories = 2200
+
+    # DIET LOGIC
     if category == "Underweight":
         labels = ["Proteins", "Carbs", "Fats"]
-        data = [40, 40, 20]
-        foods = {
-            "Proteins": "Milk, Eggs, Paneer",
-            "Carbs": "Rice, Bread",
-            "Fats": "Nuts, Butter"
+        data = [25, 55, 20]
+        meals = {
+            "Breakfast": "Milk, Banana, Peanut Butter",
+            "Lunch": "Rice, Dal, Paneer",
+            "Dinner": "Chapati, Vegetables",
+            "Snacks": "Nuts, Smoothie"
         }
 
     elif category == "Normal":
         labels = ["Proteins", "Carbs", "Fats"]
         data = [30, 50, 20]
-        foods = {
-            "Proteins": "Chicken, Dal",
-            "Carbs": "Chapati, Rice",
-            "Fats": "Oil, Nuts"
+        meals = {
+            "Breakfast": "Eggs / Oats",
+            "Lunch": "Rice, Chicken/Dal",
+            "Dinner": "Chapati, Veg",
+            "Snacks": "Fruits, Nuts"
         }
 
     else:
         labels = ["Proteins", "Carbs", "Fats"]
         data = [35, 40, 25]
-        foods = {
-            "Proteins": "Lean meat, Lentils",
-            "Carbs": "Oats, Vegetables",
-            "Fats": "Olive oil"
+        meals = {
+            "Breakfast": "Oats, Fruits",
+            "Lunch": "Grilled chicken / Dal",
+            "Dinner": "Salad, Soup",
+            "Snacks": "Green tea, Nuts"
         }
 
     return render_template("diet.html",
                            category=category,
+                           bmi=bmi,
+                           calories=calories,
                            labels=labels,
                            data=data,
-                           foods=foods)
+                           meals=meals,
+                           goal=goal)
 
-# ---------- HISTORY ----------
-@app.route("/history")
-def history():
-    conn=sqlite3.connect("users.db")
-    c=conn.cursor()
-    c.execute("SELECT bmi,category,calories,date,steps FROM history WHERE username=?",(session["user"],))
-    data=c.fetchall()
-    conn.close()
-
-    return render_template("history.html",data=data)
-
-# ---------- ANALYTICS ----------
-@app.route("/analytics")
-def analytics():
-    conn=sqlite3.connect("users.db")
-    c=conn.cursor()
-    c.execute("SELECT steps FROM history WHERE username=?",(session["user"],))
-    steps=[x[0] for x in c.fetchall()]
-    conn.close()
-
-    avg=sum(steps)//len(steps) if steps else 0
-    insight="Great activity!" if avg>5000 else "Try to be more active"
-
-    return render_template("analytics.html",avg=avg,insight=insight)
-
+# ---------- RUN ----------
 if __name__=="__main__":
     app.run(debug=True)
