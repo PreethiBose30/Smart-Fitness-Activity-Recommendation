@@ -1,11 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Home</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="navbar">
+<a href="/">Home</a>
+<a href="/history">History</a>
+<a href="/analytics">Analytics</a>
+<a href="/logout">Logout</a>
+</div>
+
 <div class="container">
 <div class="card">
-
+  
 <h2>Welcome {{ user }}</h2>
 
 <form method="POST">
-<input name="height" placeholder="Height">
-<input name="weight" placeholder="Weight">
+<input name="height" placeholder="Height" required>
+<input name="weight" placeholder="Weight" required>
 
 <select name="mood">
 <option value="energetic">Energetic</option>
@@ -13,10 +28,11 @@
 <option value="stressed">Stressed</option>
 </select>
 
-<input name="steps" placeholder="Steps">
+<input name="steps" placeholder="Steps" required>
 
 <button>Calculate</button>
 </form>
+</div>
 
-</div>
-</div>
+</body>
+</html>
