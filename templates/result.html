@@ -11,6 +11,14 @@
 
     <h3>BMI: {{ bmi }}</h3>
     <h4>Category: {{ category }}</h4>
+    <h4>Daily Calories Needed: {{ calories }} kcal</h4>
+
+    <!-- Progress Bar -->
+    <div style="background:#ddd; border-radius:10px;">
+        <div style="width: {{ bmi*2 }}%; background:green; padding:10px; color:white;">
+            BMI Level
+        </div>
+    </div>
 
     <h4>Recommended Activities:</h4>
     <ul>
@@ -26,8 +34,12 @@
         {% endfor %}
     </ul>
 
-    <a href="/diet?bmi={{ bmi }}&category={{ category }}">
+    <a href="/diet?bmi={{ bmi }}&category={{ category }}&food_type={{ food_type }}">
         <button>Show Diet Plan</button>
+    </a>
+
+    <a href="/">
+        <button>Home</button>
     </a>
 </div>
 
